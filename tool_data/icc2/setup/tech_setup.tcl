@@ -1,0 +1,110 @@
+########################################################################
+# Project: CI Expert 2026 - Parallel Binary Multiplier
+# Id: setup_dc.tcl
+# Description: Technology Setup to Parallel Binary Multiplier to the test SAED32 EDK
+# Version: 2026-07-02
+# Author: Arthur Ramalho
+#########################################################################
+
+########################################################################
+# User variables setup
+########################################################################
+set DESIGN      "parallel_binary_mult"
+set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult"
+set DLIB_DIR            "${PRJT_BASE}/dlib"  
+set LEF_DIR             "${PRJT_BASE}/lef"
+set TECH_DIR            "${PRJT_BASE}/tech"
+set NDM_DIR             "${PRJT_BASE}/ndm_lib"
+set OUT_DIR             "${PRJT_BASE}/outputs"
+
+###############################################################################
+# Tech Files Variables
+###############################################################################
+set TECH_FILE          "${TECH_DIR}/saed32nm_1p9m.tf"
+set REFERENCE_LIBRARY  "${NDM_DIR}/saed32_lvt.ndm"
+set TLUPLUS_TYP_FILE   "${TECH_DIR}/saed32nm_1p9m_nominal.tluplus"
+set TLUPLUS_MAP_FILE   "${TECH_DIR}/saed32nm_1p9m_gdsout.map"
+
+###############################################################################
+# Power/Ground Variables
+###############################################################################
+
+# Set power and ground ports
+set POWER_PORT              VDD  
+set GROUND_PORT             VSS   
+
+# Set power and ground nets
+set POWER_NET               VDD    
+set GROUND_NET              VSS
+
+# Set Std cells PG pins
+set STD_CELLS_POWER_PIN     VDD
+set STD_CELLS_GROUND_PIN    VSS
+
+###############################################################################
+# Std cells Definitions
+###############################################################################
+
+# STD Cell site height
+set SITE_HEIGHT              1.672
+
+# TODO: definir isso tambem?
+# STD Cell site width
+#set SITE_WIDTH               0.200 ????
+
+# Tie cells
+set TIE_HIGH                 "TIEH_LVT"
+set TIE_LOW                  "TIEL_LVT"
+
+# Max fanout
+set MAX_FANOUT              8
+
+# Clock Buffers
+set CLOCK_BUFFERS           "NBUFFX2 NBUFFX4 NBUFFX8 NBUFFX16 NBUFFX32"
+
+# TODO: definir isso tambem?
+# set CLOCK_ROOT_CELL         "GBUFFD8"
+
+# Delay cells
+set DELAY_CELLS             "DELLN3X2_LVT DELLN2X2_LVT DELLN1X2_LVT"
+
+# Filler cells
+# By default, tool insert cells in order specified. Specify from the largest to smallest. 
+set FILLER_CELLS          " SHFILL128_LVT \
+                            SHFILL64_LVT \
+			                SHFILL3_LVT \
+			                SHFILL2_LVT \
+			                SHFILL1_LVT "
+
+# Decap cells
+# By default, tool insert cells in order specified. Specify from the largest to smallest. 
+set DECAP_CELLS            "DCAP_LVT"
+
+# Antenna cells
+set ANTENNA_DIODES          "ANTENNA_LVT"
+
+###############################################################################
+# TODO: descobrir se tem spare cells no pdk
+# Spare cells
+# set SPARE_CELLS            "GBUFFD1 \
+#                             GINVD1 \
+#                             GND2D1 \
+#                             GNR2D1"
+
+# set ENDCAP_CELLS            "GFILL1"
+
+# TAP CELL (well/substrate)
+# set TAP_CELL                "SHFILL1_LVT"
+# set TAP_CELL_DISTANCE       "30"
+# set IO_FILLER_CELLS         ""
+###############################################################################
+
+
+###############################################################################
+# Finish tech_setup
+###############################################################################
+echo "********************************************************************************"
+echo "********************************************************************************"
+puts "\[VIRTUS-CC\] INFO: The Technology Setup for the ${DESIGN} has been completed."
+echo "********************************************************************************"
+echo "********************************************************************************"

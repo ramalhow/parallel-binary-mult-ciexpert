@@ -1,0 +1,2 @@
+/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult/rtl/parallel_binary_mult.v
+/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult/rtl/tb_parallel_binary_mult.v

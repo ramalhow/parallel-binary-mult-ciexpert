@@ -1,0 +1,11 @@
+db/*
+dlib/*
+lef/*
+libs/*
+ndm_lib/*
+outputs/*
+rpt/*
+tech/*
+
+*.log
+*.txt

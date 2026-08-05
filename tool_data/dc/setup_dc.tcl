@@ -1,0 +1,85 @@
+########################################################################
+# Project: CI Expert 2026 - Parallel Binary Multiplier
+# Id: setup_dc.tcl
+# Description: Design Compiler's script for setting up the project  
+# Version: 2026-07-02
+# Author: Arthur Ramalho
+########################################################################
+
+########################################################################
+# User variables setup
+########################################################################
+
+# Design name
+set DESIGN      "parallel_binary_mult"
+
+# Project directories
+set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult"
+set DB_DIR      "${PRJT_BASE}/db"
+set RTL_DIR     "${PRJT_BASE}/rtl"
+set OUT_DIR     "${PRJT_BASE}/outputs"
+set RPT_DIR     "${PRJT_BASE}/rpt"
+set SDC_DIR     "${PRJT_BASE}/constraints"
+
+########################################################################
+# Work library
+########################################################################
+
+# Maps a design library to a UNIX directory.
+# in this case, we're mapping the current working dir to save the outputs
+# as long as we're using this script.
+#file mkdir "WORK"
+define_design_lib WORK -path ./WORK
+
+########################################################################
+# Multicore setup
+########################################################################
+
+set_host_options -max_cores 8
+
+########################################################################
+# Library setup
+########################################################################
+
+# Search path
+set search_path "$DB_DIR $RTL_DIR"
+
+# Target libraries
+
+# currently we have 2 db options to choose
+# base on the index 
+set design_libraries [glob ${DB_DIR}/*.db]
+
+# TODO: select based on the scenario
+# for now, we choose the first
+set db_index 0 
+set target_library [lindex $design_libraries $db_index]
+
+# Synthetic library
+# will be generated on the compile phases
+set synthetic_library ""
+
+# Link library
+set link_library "* $target_library $synthetic_library"
+
+########################################################################
+# HDL setup
+########################################################################
+
+# More detailed messages during elaboration
+set hdlin_reporting_level comprehensive
+
+# Treat always blocks with set/reset as synchronous when applicable
+set hdlin_ff_always_sync_set_reset true
+
+# Warning/error control for inferred latches
+set_app_var hdlin_check_no_latch true
+
+########################################################################
+# SVF setup for Formality
+########################################################################
+
+set_svf ${OUT_DIR}/${DESIGN}.svf
+
+# Enable hierarchical guide map flow
+set_app_var hdlin_enable_hier_map true

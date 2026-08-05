@@ -1,0 +1,39 @@
+########################################################################
+# Project: CI Expert 2026 - Parallel Binary Multiplier
+# Id: setup_dc.tcl
+# Description: ICC2 Setup to Parallel Binary Multiplier to the test SAED32 EDK
+# Version: 2026-07-02
+# Author: Arthur Ramalho
+#########################################################################
+
+########################################################################
+# User variables setup
+########################################################################
+set DESIGN      "parallel_binary_mult"
+set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult"
+set TECH_DIR     "${PRJT_BASE}/tech"
+set DB_DIR       "${PRJT_BASE}/db"
+set NDM_DIR      "${PRJT_BASE}/ndm_lib"
+set OUT_DIR      "${PRJT_BASE}/outputs"
+set RPT_DIR      "${PRJT_BASE}/rpt"
+
+###############################################################################
+# Tech Files Variables
+###############################################################################
+set TECH_FILE           "${TECH_DIR}/saed32nm_1p9m.tf"
+set REFERENCE_LIBRARY   "$NDM_DIR/saed32_lvt.ndm"
+
+#-----------------------------------------------------------------------------------------------
+# TLU plus file (similar to captable)
+set TLUPLUS_TYP_FILE   "$TECH_DIR/saed32nm_1p9m_nominal.tluplus"
+set TLUPLUS_MAP_FILE   "$TECH_DIR/saed32nm_1p9m_gdsout.map"
+#-----------------------------------------------------------------------------------------------
+
+###############################################################################
+# Finish ICC2_setup
+###############################################################################
+echo "********************************************************************************"
+echo "********************************************************************************"
+puts "\[VIRTUS-CC\] INFO: The IC Compiler II Setup for the ${DESIGN} has been completed."
+echo "********************************************************************************"
+echo "********************************************************************************"
