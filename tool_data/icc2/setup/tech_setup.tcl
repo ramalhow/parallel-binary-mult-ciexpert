@@ -6,24 +6,7 @@
 # Author: Arthur Ramalho
 #########################################################################
 
-########################################################################
-# User variables setup
-########################################################################
-set DESIGN      "parallel_binary_mult"
-set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult"
-set DLIB_DIR            "${PRJT_BASE}/dlib"  
-set LEF_DIR             "${PRJT_BASE}/lef"
-set TECH_DIR            "${PRJT_BASE}/tech"
-set NDM_DIR             "${PRJT_BASE}/ndm_lib"
-set OUT_DIR             "${PRJT_BASE}/outputs"
-
-###############################################################################
-# Tech Files Variables
-###############################################################################
-set TECH_FILE          "${TECH_DIR}/saed32nm_1p9m.tf"
-set REFERENCE_LIBRARY  "${NDM_DIR}/saed32_lvt.ndm"
-set TLUPLUS_TYP_FILE   "${TECH_DIR}/saed32nm_1p9m_nominal.tluplus"
-set TLUPLUS_MAP_FILE   "${TECH_DIR}/saed32nm_1p9m_gdsout.map"
+source ../../../scripts/setup_usr_vars.tcl
 
 ###############################################################################
 # Power/Ground Variables
@@ -60,7 +43,7 @@ set TIE_LOW                  "TIEL_LVT"
 set MAX_FANOUT              8
 
 # Clock Buffers
-set CLOCK_BUFFERS           "NBUFFX2 NBUFFX4 NBUFFX8 NBUFFX16 NBUFFX32"
+set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2LVT"
 
 # TODO: definir isso tambem?
 # set CLOCK_ROOT_CELL         "GBUFFD8"
@@ -84,7 +67,7 @@ set DECAP_CELLS            "DCAP_LVT"
 set ANTENNA_DIODES          "ANTENNA_LVT"
 
 ###############################################################################
-# TODO: descobrir se tem spare cells no pdk
+	# TODO: descobrir onde tem spare cells no pdk
 # Spare cells
 # set SPARE_CELLS            "GBUFFD1 \
 #                             GINVD1 \

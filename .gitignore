@@ -7,7 +7,9 @@ ndm_lib/*
 outputs/*
 rpt/*
 tech/*
-
+vcs/csrc*
+vcs/simV.daidir*
+vcs/simV
 *.log
 *.txt
 

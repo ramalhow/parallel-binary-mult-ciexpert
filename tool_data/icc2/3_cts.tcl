@@ -22,7 +22,6 @@
 # ICC2 Setup
 ###############################################################################
 source ../setup/tech_setup.tcl
-source ../setup/icc2_setup.tcl
 
 set DLIB_DIR            "${PRJT_BASE}/dlib"
 ###############################################################################
@@ -106,7 +105,7 @@ set CLK1_TARGET_SKEW            0.20
 set_clock_tree_options  -clocks          $CLK1_ROOT \
                         -target_skew     $CLK1_TARGET_SKEW
 
-set_max_transition      $CLK1_BUFF_MAX_TRANS    [get_clocks ${CLK1_ROOT}] -clock_path
+set_max_transition       $CLK1_BUFF_MAX_TRANS    [get_clocks ${CLK1_ROOT}] -clock_path
 
 #set_max_transition      $CLK1_SINK_MAX_TRANS [get_pins -hierarchical */CP] 
 
@@ -118,11 +117,11 @@ report_path_groups
 # Id: D.001
 
 # Set clock tree cells to be used
-#set_lib_cell_purpose            -include cts ${CLOCK_BUFFERS}
+set_lib_cell_purpose            -include cts ${CLOCK_BUFFERS}
 #set_lib_cell_purpose            -include optimization ${CLOCK_BUFFERS}
 #set_lib_cell_purpose            -include hold ${CLOCK_BUFFERS}
 
-#report_lib_cells -objects [get_lib_cells] -columns {name:20 valid_purposes dont_touch}
+report_lib_cells -objects [get_lib_cells] -columns {name:20 valid_purposes dont_touch}
 
 # Define that the clock tree cells do no drive more than the max_fanout cells number defined. Default is 1000000
 #set_app_options -name cts.common.max_fanout -value $CTS_MAX_FANOUT
@@ -188,7 +187,7 @@ check_clock_trees
 ###############################################################################
 # Run CTS
 ###############################################################################
-set_host_options -max_cores 60
+set_host_options -max_cores 8
 clock_opt 
 # Construção da árvore de clock
 # clock_opt -from build_clock -to build_clock
@@ -206,10 +205,10 @@ check_clock_trees
 ###############################################################################
 # Cell count to spare cell insertion
 ###############################################################################
-source /path/to/spare_cells.tcl
-get_ref_cells_count_by_location -region [get_attribute [get_core_area] bbox] > ${RPT_DIR}/${DESIGN_STAGE}/report_cell_count.rpt
+#source /path/to/spare_cells.tcl
+#get_ref_cells_count_by_location -region [get_attribute [get_core_area] bbox] > ${RPT_DIR}/${DESIGN_STAGE}/report_cell_count.rpt
 
-calculateSpareCellPercentage ${RPT_DIR}/${DESIGN_STAGE}/report_cell_count.rpt 5
+#calculateSpareCellPercentage ${RPT_DIR}/${DESIGN_STAGE}/report_cell_count.rpt 5
 
 ###############################################################################
 # Update uncertainty AND Set propagated clock:  all clocks AND all scenarios
@@ -232,7 +231,7 @@ mark_clock_trees
 # High-fanout net tree
 ########################################
 # Report High Fanout nets
-source ${PRJT_BASE}/tools/icc2/CNN/utils/rpt_high_fanout.tcl > ${RPT_DIR}/${DESIGN_STAGE}/report_high_fanout_before_fix.rpt
+#source ${PRJT_BASE}/tools/icc2/CNN/utils/rpt_high_fanout.tcl > ${RPT_DIR}/${DESIGN_STAGE}/report_high_fanout_before_fix.rpt
 # Shows only nets with fanout greater than 20 fanout.
 report_net_fanout   -threshold 20  [get_flat_nets -filter "net_type==signal"]
 

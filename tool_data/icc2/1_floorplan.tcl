@@ -14,7 +14,6 @@
 # Tech & ICC2 Setup
 ###############################################################################
 source ../setup/tech_setup.tcl
-source ../setup/icc2_setup.tcl
 
 set_host_options -max_cores 8
 
@@ -37,17 +36,14 @@ copy_block             -from ${DESIGN}/${PREV_STAGE} \
 # set the copy as the current design to work
 current_block          ${DESIGN}/${DESIGN_STAGE}
 
-# load the initial constraints
-read_sdc                ${OUT_DIR}/${DESIGN}_initial_constraints.sdc
-
 # Analysis scenarios
-#get_scenarios
-#report_scenarios -nosplit
-#current_scenario
+get_scenarios
+report_scenarios -nosplit
+current_scenario tc
 
 # Enable clock reconvergence pessimism removal as_user_default
 # Remove the pessimism from the timing calculation caused by charged clock paths
-#set_app_options -as_user_default -name time.remove_clock_reconvergence_pessimism -value true
+set_app_options -as_user_default -name time.remove_clock_reconvergence_pessimism -value true
 
 # Generate SVF for Formality tool
 set_svf -append  ${OUT_DIR}/${DESIGN}.svf
@@ -76,7 +72,7 @@ initialize_floorplan \
       -orientation N\
       -side_ratio {1 1 1 1}\
       -core_offset {1}\
-      -core_utilization 0.60
+      -core_utilization 0.55
 
 shape_blocks
 
@@ -190,14 +186,14 @@ set_pg_strategy  pg_strategy_mesh_m4  -core  -pattern {{pattern: pg_mesh_m4}{net
 compile_pg -strategies pg_strategy_mesh_m4
 #---------------------------------------------------------------------------------------
 
-# TODO: Do the Internal PG mesh
-create_pg_mesh_pattern pg_internal_mesh_m5 -layers { {{horizontal_layer: M5} {width: 5} {spacing: 8} {pitch: 20} {trim: true}}  } -via_rule {}
-set_pg_strategy  pg_strategy_mesh_m5  -core  -pattern {{pattern: pg_internal_mesh_m5}{nets: {VSS VDD}} } -extension {{stop: outermost_ring}}
-compile_pg -strategies pg_strategy_mesh_m5
+# # TODO: Do the Internal PG mesh
+# create_pg_mesh_pattern pg_internal_mesh_m5 -layers { {{horizontal_layer: M5} {width: 5} {spacing: 8} {pitch: 20} {trim: true}}  } -via_rule {}
+# set_pg_strategy  pg_strategy_mesh_m5  -core  -pattern {{pattern: pg_internal_mesh_m5}{nets: {VSS VDD}} } -extension {{stop: outermost_ring}}
+# compile_pg -strategies pg_strategy_mesh_m5
 
-create_pg_mesh_pattern pg_internal_mesh_m6 -layers { {{vertical_layer: M6} {width: 5} {spacing: 8} {pitch: 20} {trim: true}} }  -via_rule {}
-set_pg_strategy  pg_strategy_mesh_m6 -core  -pattern {{pattern: pg_internal_mesh_m6}{nets: {VSS VDD }} } 
-compile_pg -strategies pg_strategy_mesh_m6
+# create_pg_mesh_pattern pg_internal_mesh_m6 -layers { {{vertical_layer: M6} {width: 5} {spacing: 8} {pitch: 20} {trim: true}} }  -via_rule {}
+# set_pg_strategy  pg_strategy_mesh_m6 -core  -pattern {{pattern: pg_internal_mesh_m6}{nets: {VSS VDD }} } 
+# compile_pg -strategies pg_strategy_mesh_m6
 
 legalize_placement
 

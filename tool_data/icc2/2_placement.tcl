@@ -16,7 +16,7 @@
 # Tech & ICC2 Setup
 ###############################################################################
 source ../setup/tech_setup.tcl
-source ../setup/icc2_setup.tcl
+
 set DLIB_DIR            "${PRJT_BASE}/dlib"
 
 ###############################################################################
@@ -281,21 +281,48 @@ legalize_placement  -incremental
 # Check placement
 ###############################################################################
 # Have a look at the EMS messages in the ICC2 GUI (Window -> Message Browser Window.  File -> Open Message Database)
-set diretivas { analyze_design_violations \
-block_ready_for_top cts_qor design_states \
-dp_floorplan_rules dp_pre_block_shaping \
-dp_pre_budgeting dp_pre_clock_trunk_planning \
-dp_pre_create_placement_abstract dp_pre_create_timing_abstract \
-dp_pre_floorplan dp_pre_macro_placement dp_pre_pin_placement \
-dp_pre_power_insertion dp_pre_push_down dp_pre_timing_estimation \
-feedthroughs finfet_grid hier_pre_compile hier_timing mib_alignment \
-netlist physical_constraints pin_placement clock_trees design_mismatch \
-hier_pre_clock_tree legality mv_design scan_chain timing design_mismatch \
-hier_pre_placement mv_design rp_constraints scan_chain timing routes safety_status unbound 3d_netlist }
+set diretivas {
+    block_ready_for_top
+    cts_qor
+    design_states
+    dp_floorplan_rules
+    dp_pre_block_shaping
+    dp_pre_budgeting
+    dp_pre_clock_trunk_planning
+    dp_pre_create_placement_abstract
+    dp_pre_create_timing_abstract
+    dp_pre_floorplan
+    dp_pre_macro_placement
+    dp_pre_pin_placement
+    dp_pre_power_insertion
+    dp_pre_push_down
+    dp_pre_timing_estimation
+    feedthroughs
+    finfet_grid
+    hier_pre_compile
+    hier_timing
+    mib_alignment
+    netlist
+    physical_constraints
+    pin_placement
+    clock_trees
+    design_mismatch
+    hier_pre_clock_tree
+    legality
+    mv_design
+    scan_chain
+    timing
+    hier_pre_placement
+    rp_constraints
+    routes
+    safety_status
+    unbound
+    3d_netlist
+}
 
-check_design -checks $diretivas
+#check_design -checks $diretivas
 
-# analyze_design_violations
+#analyze_design_violations
 
 # Check Legality
 check_legality          -verbose        > ${RPT_DIR}/${DESIGN_STAGE}/placement_legality.rpt

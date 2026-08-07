@@ -6,9 +6,6 @@
 # Author: Arthur Ramalho
 ########################################################################
 
-########################################################################
-# User variables setup
-########################################################################
 source ../../../scripts/setup_usr_vars.tcl
 
 ########################################################################
@@ -19,7 +16,7 @@ source ../../../scripts/setup_usr_vars.tcl
 # in this case, we're mapping the current working dir to save the outputs
 # as long as we're using this script.
 #file mkdir "WORK"
-define_design_lib WORK -path ./WORK
+define_design_lib WORK -path .
 
 ########################################################################
 # Multicore setup
@@ -42,8 +39,10 @@ set design_libraries [glob ${DB_DIR}/*.db]
 
 # TODO: select based on the scenario
 # for now, we choose the first
-set db_index 0 
-set target_library [lindex $design_libraries $db_index]
+#set db_index 1 
+#set target_library [lindex $design_libraries $db_index]
+
+set target_library $design_libraries
 
 # Synthetic library
 # will be generated on the compile phases
