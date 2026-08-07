@@ -9,17 +9,7 @@
 ########################################################################
 # User variables setup
 ########################################################################
-
-# Design name
-set DESIGN      "parallel_binary_mult"
-
-# Project directories
-set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/project_parallel_binary_mult"
-set DB_DIR      "${PRJT_BASE}/db"
-set RTL_DIR     "${PRJT_BASE}/rtl"
-set OUT_DIR     "${PRJT_BASE}/outputs"
-set RPT_DIR     "${PRJT_BASE}/rpt"
-set SDC_DIR     "${PRJT_BASE}/constraints"
+source ../../../scripts/setup_usr_vars.tcl
 
 ########################################################################
 # Work library

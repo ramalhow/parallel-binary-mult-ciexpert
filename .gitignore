@@ -1,3 +1,4 @@
+# remove all content from folders
 db/*
 dlib/*
 lef/*
@@ -9,3 +10,13 @@ tech/*
 
 *.log
 *.txt
+
+# keep the folders
+!db/.gitkeep
+!dlib/.gitkeep
+!lef/.gitkeep
+!libs/.gitkeep
+!ndm_lib/.gitkeep
+!outputs/.gitkeep
+!rpt/.gitkeep
+!tech/.gitkeep
