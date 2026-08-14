@@ -281,48 +281,43 @@ legalize_placement  -incremental
 # Check placement
 ###############################################################################
 # Have a look at the EMS messages in the ICC2 GUI (Window -> Message Browser Window.  File -> Open Message Database)
-set diretivas {
-    block_ready_for_top
-    cts_qor
-    design_states
-    dp_floorplan_rules
-    dp_pre_block_shaping
-    dp_pre_budgeting
-    dp_pre_clock_trunk_planning
-    dp_pre_create_placement_abstract
-    dp_pre_create_timing_abstract
-    dp_pre_floorplan
-    dp_pre_macro_placement
-    dp_pre_pin_placement
-    dp_pre_power_insertion
-    dp_pre_push_down
-    dp_pre_timing_estimation
-    feedthroughs
-    finfet_grid
-    hier_pre_compile
-    hier_timing
-    mib_alignment
-    netlist
-    physical_constraints
-    pin_placement
-    clock_trees
-    design_mismatch
-    hier_pre_clock_tree
-    legality
-    mv_design
-    scan_chain
-    timing
-    hier_pre_placement
-    rp_constraints
-    routes
-    safety_status
-    unbound
-    3d_netlist
-}
 
-#check_design -checks $diretivas
+check_design -checks    block_ready_for_top
+check_design -checks    cts_qor 
+check_design -checks    design_states 
+check_design -checks    dp_floorplan_rules 
+check_design -checks    dp_pre_block_shaping 
+check_design -checks    dp_pre_budgeting 
+check_design -checks    dp_pre_clock_trunk_planning 
+check_design -checks    dp_pre_create_placement_abstract 
+check_design -checks    dp_pre_create_timing_abstract 
+check_design -checks    dp_pre_floorplan 
+check_design -checks    dp_pre_macro_placement 
+check_design -checks    dp_pre_pin_placement 
+check_design -checks    dp_pre_power_insertion 
+check_design -checks    dp_pre_push_down 
+check_design -checks    dp_pre_timing_estimation 
+check_design -checks    hier_pre_compile 
+check_design -checks    hier_timing 
+check_design -checks    mib_alignment 
+check_design -checks    netlist 
+check_design -checks    physical_constraints 
+check_design -checks    pin_placement 
+check_design -checks    clock_trees 
+check_design -checks    design_mismatch 
+check_design -checks    hier_pre_clock_tree 
+check_design -checks    legality 
+check_design -checks    mv_design 
+check_design -checks    scan_chain 
+check_design -checks    timing 
+check_design -checks    hier_pre_placement 
+check_design -checks    rp_constraints 
+check_design -checks    routes 
+check_design -checks    safety_status 
+check_design -checks    unbound 
+check_design -checks    3d_netlist
 
-#analyze_design_violations
+analyze_design_violations
 
 # Check Legality
 check_legality          -verbose        > ${RPT_DIR}/${DESIGN_STAGE}/placement_legality.rpt
