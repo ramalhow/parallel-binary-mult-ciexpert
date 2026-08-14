@@ -63,7 +63,7 @@ set_svf -append  ${OUT_DIR}/${DESIGN}.svf
 # Route Options
 ###############################################################################
 # Layer Options
-set BOTTOM_ROUTING_LAYER        M3
+set BOTTOM_ROUTING_LAYER        M4
 set TOP_ROUTING_LAYER           M9
 
 remove_ignored_layers           -all
@@ -80,7 +80,7 @@ set_app_options -name route.common.verbose_level -value 0
 # Please ignore the NEX-048 Error
 
 
-#      Antenna
+# Antenna
 source -echo ${ANT_DIR}/saed32nm_ant_1p9m.tcl
 report_app_options route.detail.*antenna*
 

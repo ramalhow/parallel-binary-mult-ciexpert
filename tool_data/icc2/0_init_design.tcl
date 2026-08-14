@@ -81,12 +81,10 @@ report_lib   \
 # Generate SVF for Formality tool
 set_svf    ${OUT_DIR}/$DESIGN.svf
 
-# set_app_options -as_user_default -name time.remove_clock_reconvergence_pessimism -value true
-
+set_app_options -as_user_default -name time.remove_clock_reconvergence_pessimism -value true
 
 # load the initial constraints
-read_sdc                ${OUT_DIR}/${DESIGN}_initial_constraints.sdc
-
+read_sdc ${OUT_DIR}/${DESIGN}_initial_constraints.sdc
 
 ################################################################################
 # Create analysis scenarios
@@ -123,4 +121,3 @@ puts "\[VIRTUS-CC\] INFO: The ${DESIGN_STAGE} for the ${DESIGN} has been complet
 puts "\[VIRTUS-CC\] INFO: Calling GUI ..."
 echo "*****************************************************************************************"
 echo "*****************************************************************************************"
-start_gui 

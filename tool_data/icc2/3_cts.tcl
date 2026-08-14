@@ -86,7 +86,7 @@ set CTS_SCENARIO                tc
 set_app_options         -name cts.common.enable_auto_skew_target_for_local_skew \
                         -value true
 
-set CTS_MAX_FANOUT              12
+set CTS_MAX_FANOUT              8
 
 # Routing Layers: M2 to M3
 set BOTTOM_ROUTING_LAYER        M4
@@ -124,13 +124,13 @@ set_lib_cell_purpose            -include cts ${CLOCK_BUFFERS}
 report_lib_cells -objects [get_lib_cells] -columns {name:20 valid_purposes dont_touch}
 
 # Define that the clock tree cells do no drive more than the max_fanout cells number defined. Default is 1000000
-#set_app_options -name cts.common.max_fanout -value $CTS_MAX_FANOUT
+set_app_options -name cts.common.max_fanout -value $CTS_MAX_FANOUT
 
 # Enable congestion aware CTS for design with complex or fragmented floorplans. CTS detours #congested areas by enabling global routing during CTS
-#set_app_options -name cts.compile.enable_global_route -value true
+set_app_options -name cts.compile.enable_global_route -value true
 
 # (default medium) Specifies the effort level for the congestion alleviation in clock_opt. Expect a significant increase in runtime for high effort.
-#set_app_options -name clock_opt.place.congestion_effort -value high
+set_app_options -name clock_opt.place.congestion_effort -value high
 
 # Enable Local Skew CTS and CTO (by default using CCD flow I do not need to enable this app option)
 #set_app_options -name cts.compile.enable_local_skew -value true
@@ -154,7 +154,7 @@ report_lib_cells -objects [get_lib_cells] -columns {name:20 valid_purposes dont_
 # Specifies exceptions to apply while balancing clock trees at the specified pins, ports, and clocks.
 #set_app_options -name cts.balance_groups.honor_source_latency -value true
 
-#report_clock_balance_points
+report_clock_balance_points
 
 # Removes user-specified constraints set with the set_clock_balance_points command. By default, the command removes the constraints from all clocks of the current mode.
 # remove_clock_balance_points
@@ -188,18 +188,19 @@ check_clock_trees
 # Run CTS
 ###############################################################################
 set_host_options -max_cores 8
-clock_opt 
+#clock_opt 
+
 # Construção da árvore de clock
-# clock_opt -from build_clock -to build_clock
+clock_opt -from build_clock -to build_clock
 
 # Otimização após a construção
-# clock_opt -from route_clock -to route_clock
+clock_opt -from route_clock -to route_clock
 
 # Otimização final
-# clock_opt -from final_opto -to final_opto
+clock_opt -from final_opto -to final_opto
 
 # If there are any small clock transition violations after 'clock_opt' run the
-# synthesize_clock_trees  -postroute
+synthesize_clock_trees  -postroute
 
 check_clock_trees
 ###############################################################################
@@ -311,7 +312,7 @@ report_constraints      -all_violators \
 ###############################################################################
 save_block              -as ${DESIGN}/${DESIGN_STAGE} \
                         -compress
-
+save_lib
 ###############################################################################
 ###############################################################################
 ##################  FINISH CLOCK TREE SYNTHESIS ###############################
@@ -325,6 +326,5 @@ puts "\[VIRTUS-CC\] INFO: Calling GUI ..."
 echo "*****************************************************************************************"
 echo "*****************************************************************************************"
 date
-after 5000
 start_gui 
 return
