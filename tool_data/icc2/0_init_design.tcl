@@ -83,7 +83,7 @@ source ../setup/scenarios.tcl
 current_scenario tc
 
 # loading constraints
-source ../../../scripts/constraints.tcl
+read_sdc ${SDC_DIR}/${DESIGN}.sdc
 
 get_corners
 all_corners
