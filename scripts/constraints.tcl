@@ -20,12 +20,13 @@ set CLOCK_SKEW_SETUP [expr $MAIN_CLK*0.02]
 
 set CLOCK_TRANST_MAX [expr $MAIN_CLK*0.02]
 
-#set CLOCK_TRANST_MIN [expr $MAIN_CLK*0.02]
+set CLOCK_TRANST_MIN [expr $MAIN_CLK*0.01]
 
 set CLOCK_SRC_LATENCY_MAX [expr $MAIN_CLK*0.015]
 
 set CLOCK_LATENCY_MAX [expr $MAIN_CLK*0.015]
 
+set INPUT_PORT_DELAY_MIN [expr $MAIN_CLK*0.01]
 set INPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
 
 set OUTPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
@@ -33,8 +34,7 @@ set OUTPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
 # TODO: search more about this
 set MAX_OUTPUT_LOAD 0.005 
 
-#set MIN_INPUT_TRANST [expr $MAIN_CLK*0.01]
-
+set MIN_INPUT_TRANST [expr $MAIN_CLK*0.01]
 set MAX_INPUT_TRANST [expr $MAIN_CLK*0.1]
 
 ########################################################################
@@ -61,7 +61,9 @@ set_clock_latency -source -max $CLOCK_SRC_LATENCY_MAX [get_clocks $DESIGN_CLK_NA
 set_clock_latency -max $CLOCK_LATENCY_MAX [get_clocks $DESIGN_CLK_NAME]
 
 # Quanto bloco anterior pode gastar.
+set_input_delay -min $INPUT_PORT_DELAY_MIN -clock $DESIGN_CLK_NAME [get_ports [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]]
 set_input_delay -max $INPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [get_ports [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]]
+
 
 # Tempo que precisa para entregar a saída cedo o suficiente para o próximo bloco.
 set_output_delay -max $OUTPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [get_ports [all_outputs]]
@@ -69,5 +71,5 @@ set_output_delay -max $OUTPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [get_ports 
 # Limits the max capacitive load on the outputs
 set_load -max $MAX_OUTPUT_LOAD [all_outputs]
 
-#set_input_transition -min $MIN_INPUT_TRANST [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]
+set_input_transition -min $MIN_INPUT_TRANST [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]
 set_input_transition -max $MAX_INPUT_TRANST [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]
