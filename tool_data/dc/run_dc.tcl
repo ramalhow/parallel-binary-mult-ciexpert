@@ -44,7 +44,7 @@ current_design ${DESIGN}
 ########################################################################
 # Load Constraints
 ########################################################################
-source ../dc_constraints.tcl
+source ../../../scripts/constraints.tcl
 
 ########################################################################
 # Generating the precompile reports
@@ -135,7 +135,7 @@ write_file -format ddc     -hier -out ${OUT_DIR}/PRE_LAYOUT/${DESIGN}.ddc
 write_file -format verilog -hier -out ${OUT_DIR}/PRE_LAYOUT/${DESIGN}.v
 
 # Save constraints
-write_sdc ${OUT_DIR}/${DESIGN}_initial_constraints.sdc
+write_sdc ${SDC_DIR}/${DESIGN}.sdc
 
 # Save SDF
 write_sdf ${OUT_DIR}/${DESIGN}.sdf

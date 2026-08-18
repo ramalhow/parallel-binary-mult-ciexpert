@@ -26,14 +26,14 @@ set CLOCK_SRC_LATENCY_MAX [expr $MAIN_CLK*0.015]
 
 set CLOCK_LATENCY_MAX [expr $MAIN_CLK*0.015]
 
-set INPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.3]
+set INPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
 
-set OUTPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.3]
+set OUTPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
 
 # TODO: search more about this
 set MAX_OUTPUT_LOAD 0.005 
 
-set MIN_INPUT_TRANST [expr $MAIN_CLK*0.01]
+#set MIN_INPUT_TRANST [expr $MAIN_CLK*0.01]
 
 set MAX_INPUT_TRANST [expr $MAIN_CLK*0.1]
 
@@ -42,7 +42,7 @@ set MAX_INPUT_TRANST [expr $MAIN_CLK*0.1]
 ########################################################################
 
 # Create the clock instance in our previously defined clock port name
-create_clock -period $MAIN_CLK [get_ports $DESIGN_CLK_NAME] -name $DESIGN_CLK_NAME
+create_clock -period $MAIN_CLK [get_ports $DESIGN_CLK_NAME]
 
 # Define the max uncertanty (jitter + skew + process variation + clock uncertanty)
 # in the SETUP phase
@@ -69,5 +69,5 @@ set_output_delay -max $OUTPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [get_ports 
 # Limits the max capacitive load on the outputs
 set_load -max $MAX_OUTPUT_LOAD [all_outputs]
 
-set_input_transition -min $MIN_INPUT_TRANST [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]
+#set_input_transition -min $MIN_INPUT_TRANST [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]
 set_input_transition -max $MAX_INPUT_TRANST [remove_from_collection [all_inputs] $DESIGN_CLK_NAME]
