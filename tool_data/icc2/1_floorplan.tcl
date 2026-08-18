@@ -39,7 +39,7 @@ set_scenario_status -active true [all_scenarios]
 report_scenarios -nosplit
 
 # Lê restrições de SDC
-read_sdc ${OUT_DIR}/${DESIGN}.sdc
+read_sdc ${SDC_DIR}/${DESIGN}.sdc
 
 set_svf -append ${OUT_DIR}/${DESIGN}.svf
 
