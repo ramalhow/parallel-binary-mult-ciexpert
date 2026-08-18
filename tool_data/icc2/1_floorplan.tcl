@@ -14,7 +14,6 @@
 #                * Defines Floorplan
 #                * Defines Powerplan
 #                * Routes power nets
-#                * Runs rail analysis
 # -------------------------------------------------------------------------------------
 
 ###############################################################################
@@ -39,10 +38,8 @@ get_scenarios
 set_scenario_status -active true [all_scenarios]
 report_scenarios -nosplit
 
-# Lê restrições de SDC (se necessário para a etapa)
-if {[file exists ${OUT_DIR}/${DESIGN}_initial_constraints.sdc]} {
-    read_sdc ${OUT_DIR}/${DESIGN}_initial_constraints.sdc
-}
+# Lê restrições de SDC
+read_sdc ${OUT_DIR}/${DESIGN}.sdc
 
 set_svf -append ${OUT_DIR}/${DESIGN}.svf
 
@@ -51,7 +48,7 @@ set_svf -append ${OUT_DIR}/${DESIGN}.svf
 # ################################################################################
 # # By default, the initialize_floorplan command creates site arrays. To modify Rows you must use -use_site_row
 
-initialize_floorplan -shape R -orientation N -side_ratio {1 1 1 1} -core_offset {3}
+initialize_floorplan -shape R -orientation N -side_ratio {1 1 1 1} -core_offset {3} -core_utilization 0.55
 
 shape_blocks
 
