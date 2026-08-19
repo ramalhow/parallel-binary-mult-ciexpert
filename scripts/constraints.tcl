@@ -36,39 +36,3 @@ set MAX_OUTPUT_LOAD 0.005
 
 set MIN_INPUT_TRANST [expr $MAIN_CLK*0.01]
 set MAX_INPUT_TRANST [expr $MAIN_CLK*0.1]
-
-########################################################################
-# APPLYING CONSTRAINTS
-########################################################################
-
-# Create the clock instance in our previously defined clock port name
-create_clock -period $MAIN_CLK [get_ports $DESIGN_CLK_NAME]
-
-# Define the max uncertanty (jitter + skew + process variation + clock uncertanty)
-# in the SETUP phase
-set_clock_uncertainty -setup $CLOCK_SKEW_SETUP [get_clocks $DESIGN_CLK_NAME]
-
-# A ferramenta deixa de assumir um clock ideal.
-# Impacto: delay das células, análise de setup, análise de hold e potência.
-set_clock_transition -max $CLOCK_TRANST_MAX [get_clocks $DESIGN_CLK_NAME]
-
-# set_clock_transition -min $CLOCK_TRANST_MIN [get_clocks $DESIGN_CLK_NAME]
-
-# Clock source latency
-set_clock_latency -source -max $CLOCK_SRC_LATENCY_MAX [get_clocks $DESIGN_CLK_NAME]
-
-# Clock "general" latency (?)
-set_clock_latency -max $CLOCK_LATENCY_MAX [get_clocks $DESIGN_CLK_NAME]
-
-# Quanto bloco anterior pode gastar.
-set_input_delay -min $INPUT_PORT_DELAY_MIN -clock $DESIGN_CLK_NAME [all_inputs -exclude_clock_ports]
-set_input_delay -max $INPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [all_inputs -exclude_clock_ports]
-
-# Tempo que precisa para entregar a saída cedo o suficiente para o próximo bloco.
-set_output_delay -max $OUTPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [get_ports [all_outputs]]
-
-# Limits the max capacitive load on the outputs
-set_load -max $MAX_OUTPUT_LOAD [all_outputs]
-
-set_input_transition -min $MIN_INPUT_TRANST [all_inputs -exclude_clock_ports]
-set_input_transition -max $MAX_INPUT_TRANST [all_inputs -exclude_clock_ports]

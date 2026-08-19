@@ -43,7 +43,7 @@ set TIE_LOW                  "TIEL_LVT"
 set MAX_FANOUT              8
 
 # Clock Buffers
-set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2LVT"
+set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2_LVT"
 
 # TODO: definir isso tambem?
 # set CLOCK_ROOT_CELL         "GBUFFD8"
