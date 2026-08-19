@@ -43,10 +43,10 @@ read_sdc ${SDC_DIR}/${DESIGN}.sdc
 
 set_svf -append ${OUT_DIR}/${DESIGN}.svf
 
-# ################################################################################
-# # ICC2 Creates floorplan
-# ################################################################################
-# # By default, the initialize_floorplan command creates site arrays. To modify Rows you must use -use_site_row
+################################################################################
+# ICC2 Creates floorplan
+################################################################################
+# By default, the initialize_floorplan command creates site arrays. To modify Rows you must use -use_site_row
 
 initialize_floorplan -shape R -orientation N -side_ratio {1 1 1 1} -core_offset {3} -core_utilization 0.55
 
@@ -68,20 +68,14 @@ set_attribute -name routing_direction [get_layer M8] -value vertical
 set_attribute -name routing_direction [get_layer M9] -value horizontal 
 
 set_app_options -list {plan.place.congestion_driven_mode both}
-# ## Creates a rough placement of the cells only for floorplaning purpose
+## Creates a rough placement of the cells only for floorplaning purpose
 create_placement -floorplan -use_seed_locs -timing_driven -incremental -effort high
 
-#report_app_options plan.place*
-
-# # Unplace all std cells, since only macro place at this stage
-# #reset_placement -spread_cells
-# #reset_placement
-
-# ###############################################################################
-# # prePlacement congestion driven
-# ###############################################################################
-# # After all relative place constraints set
-# # Effort level for congestion-driven restructuring
+###############################################################################
+# prePlacement congestion driven
+###############################################################################
+# After all relative place constraints set
+# Effort level for congestion-driven restructuring
 set_app_options  -name place.coarse.cong_restruct        -value on
 set_app_options  -name place.coarse.cong_restruct_effort -value ultra
 set_app_options  -name plan.place.congestion_driven_mode -value both
@@ -126,7 +120,6 @@ foreach_in_collection corner [get_cells -filter design_type==corner] {
 	}
 }
 
-
 set_app_options -name plan.pgroute.ignore_signal_route -value true
 
 # PG RING 
@@ -160,8 +153,6 @@ set_pg_strategy M1_rails \
                  -pattern   { {name: rail_pattern} {nets: {VDD VSS}}} \
                  -extension  {{stop: innermost_ring} } \
                  -core
-
-
 
 compile_pg -strategies M1_rails -via_rule {rail_rule}
 
@@ -220,7 +211,6 @@ legalize_placement
 set_block_pin_constraints -self -pin_spacing_distance 4 -sides {1 2 3 4} -allowed_layers {M4 M5 M6 M7} -hard_constraints {location spacing layer}
 place_pins -self
 
-
 save_lib
 
 ###############################################################################
@@ -241,22 +231,30 @@ check_pg_drc -ignore_std_cells
 check_pg_connectivity -check_std_cell_pins none
 
 ###############################################################################
-# Report_timing
+# Report floorplan results
 ###############################################################################
-file mkdir             ${RPT_DIR}/${DESIGN_STAGE}
-report_qor              -significant_digits 3 \
-                        -scenarios [get_scenarios] \
-                        > ${RPT_DIR}/report_qor.rpt
+file mkdir ${RPT_DIR}/${DESIGN_STAGE}
 
-###############################################################################
-# Reports
-###############################################################################
-report_utilization           > ${RPT_DIR}/report_utilization_postFloorplan.rpt
+report_design -floorplan     > ${RPT_DIR}/${DESIGN_STAGE}/report_design.rpt
 
-# Reports the routing track direction, startpoint, number of tracks and pitch
-#report_tracks
+report_utilization           > ${RPT_DIR}/${DESIGN_STAGE}/report_utilization.rpt
 
-report_design -floorplan     > ${RPT_DIR}/report_design.rpt
+check_legality               > ${RPT_DIR}/${DESIGN_STAGE}/check_legality.rpt
+
+report_ports                 > ${RPT_DIR}/${DESIGN_STAGE}/report_ports.rpt
+
+report_pg_strategies         > ${RPT_DIR}/${DESIGN_STAGE}/report_pg_stategies.rpt
+
+check_pg_connectivity -check_std_cell_pins none > ${RPT_DIR}/${DESIGN_STAGE}/check_pg_connectivity.rpt
+
+# extras
+check_pg_drc -ignore_std_cells   > ${RPT_DIR}/${DESIGN_STAGE}/check_pg_drc.rpt
+
+check_pg_missing_vias        > ${RPT_DIR}/${DESIGN_STAGE}/check_pg_missing_vias.rpt
+
+# final qor
+report_qor -significant_digits 3 -scenarios [get_scenarios] \
+                             > ${RPT_DIR}/${DESIGN_STAGE}/report_qor.rpt
 
 ###############################################################################
 # Creates abstract and frame views of the design
@@ -268,11 +266,10 @@ create_frame
 ###############################################################################
 # Generate Floorplan DEF file
 ###############################################################################
-write_floorplan	        -force \
-                        -output ${OUT_DIR}/${DESIGN}.fp
+write_floorplan -force -output ${OUT_DIR}/${DESIGN}.fp
 
 # Writes the floorplan for Design Compiler Synopsys tool
-write_floorplan	        -force -output ${OUT_DIR}/${DESIGN}.fp.dc -net_types {power ground} -include_physical_status {fixed locked}
+write_floorplan -force -output ${OUT_DIR}/${DESIGN}.fp.dc -net_types {power ground} -include_physical_status {fixed locked}
 
 write_def               -include_tech_via_definitions \
                         -include {rows_tracks vias blockages specialnets} \
@@ -283,8 +280,6 @@ write_def               -include_tech_via_definitions \
 ###############################################################################
 save_block              -as ${DESIGN}/${DESIGN_STAGE} \
                         -compress
-
-#close_lib
 
 ###############################################################################
 ###############################################################################
@@ -298,7 +293,5 @@ puts "\[VIRTUS-CC\] INFO: Calling GUI ..."
 echo "*****************************************************************************************"
 echo "*****************************************************************************************"
 date
-after 5000
-start_gui 
 return
 
