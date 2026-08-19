@@ -28,11 +28,6 @@ get_scenarios
 set_scenario_status -active true [all_scenarios]
 report_scenarios -nosplit
 
-# Lê restrições de SDC (se necessário para a etapa)
-if {[file exists ${OUT_DIR}/${DESIGN}_initial_constraints.sdc]} {
-    read_sdc ${OUT_DIR}/${DESIGN}_initial_constraints.sdc
-}
-
 set_svf -append ${OUT_DIR}/${DESIGN}.svf
 
 ###############################################################################
@@ -48,47 +43,44 @@ check_design -checks physical_constraints
 ###############################################################################
 # Configuração de Células Tie (High/Low)
 suppress_message ATTR-12
-if {[info exists TIE_HIGH] && [info exists TIE_LOW]} {
-    set_lib_cell_purpose -include optimization [get_lib_cells "$TIE_HIGH $TIE_LOW"]
-    set_dont_touch [get_lib_cells "$TIE_HIGH $TIE_LOW"] false
-}
+
+set_lib_cell_purpose -include optimization [get_lib_cells "$TIE_HIGH $TIE_LOW"]
+set_dont_touch [get_lib_cells "$TIE_HIGH $TIE_LOW"] false
 
 # Configuração de Células de CTS (Excluídas da otimização regular se necessário)
 set CTS_LIB_CELL_PATTERN_LIST "INV* IBUFF* NBUFF*"
 set CTS_CELLS [get_lib_cells -quiet $CTS_LIB_CELL_PATTERN_LIST]
-if {[sizeof_collection $CTS_CELLS] > 0} {
-    set_dont_touch $CTS_CELLS false
-    set_lib_cell_purpose -exclude cts [get_lib_cells]
-    set_lib_cell_purpose -include cts $CTS_CELLS
-}
+
+set_dont_touch $CTS_CELLS false
+set_lib_cell_purpose -exclude cts [get_lib_cells]
+set_lib_cell_purpose -include cts $CTS_CELLS
 unsuppress_message ATTR-12
 
 ###############################################################################
-# 1. Tap Cells Placement (CRÍTICO: Deve rodar antes das Std Cells)
+# Tap Cells Placement 
 ###############################################################################
-if {[info exists TAP_CELL] && $TAP_CELL != ""} {
-    create_tap_cells -lib_cell $TAP_CELL \
-                     -distance 30 \
+create_tap_cells -lib_cell $TAP_CELL \
+                     -distance $TAP_CELL_DISTANCE \
                      -pattern every_row \
                      -separator "_" \
                      -skip_fixed_cells
-}
 
 ###############################################################################
 # Placement & Routing Layer Options
 ###############################################################################
 # Limite de camadas de roteamento para sinais
-set BOTTOM_ROUTING_LAYER M1
-set TOP_ROUTING_LAYER M9
+set BOTTOM_ROUTING_LAYER M2
+set TOP_ROUTING_LAYER M8
 
 remove_ignored_layers -all
 set_ignored_layers -min_routing_layer $BOTTOM_ROUTING_LAYER \
                    -max_routing_layer $TOP_ROUTING_LAYER
 
 # Opções globais de otimização
-set_app_options -name opt.power.mode -value total
-set_app_options -name opt.tie_cell.max_fanout -value 5
-set_app_options -name opt.common.user_instance_name_prefix -value BUF_pOPT_
+set_app_options -name opt.power.mode  -value total
+set_app_options -name opt.area.effort -value high
+set_app_options -name opt.tie_cell.max_fanout -value $MAX_FANOUT
+#set_app_options -name opt.common.user_instance_name_prefix -value BUF_pOPT_
 
 # Opções de congestionamento e densidade
 set_app_options -name place.coarse.cong_restruct -value on
@@ -96,32 +88,24 @@ set_app_options -name place.coarse.cong_restruct_effort -value ultra
 set_app_options -name place.coarse.pin_density_aware -value true
 set_app_options -name place.coarse.auto_density_control -value enhanced
 
-# Habilita suporte a Synopsys Physical Guidance (SPG) se a síntese foi feita no DC
-set_app_options -name place_opt.flow.do_spg -value true
-
 ###############################################################################
 # Place Design
 ###############################################################################
 # Initial placement
-create_placement -use_seed_locs -incremental -congestion -congestion_effort high -effort high
-set_app_options -name place.coarse.cong_restruct -value on
-set_app_options -name place.coarse.cong_restruct_original_strategy -value true
+create_placement -use_seed_locs -congestion -congestion_effort high -effort high
 
-##################################################################
-create_placement -congestion -congestion_effort high -effort high
-##################################################################
+legalize_placement -incremental
+
+place_opt
+
 #remove_buffer_tree -all -hfs_fanout_threshold 1
 set_app_options -name opt.area.effort -value high
-
 
 ###############################################################################
 # 3. Tie Cells Insertion
 ###############################################################################
-# if {[info exists TIE_HIGH] && [info exists TIE_LOW]} {
-#     add_tie_cells -tie_high_lib_cells [get_lib_cells $TIE_HIGH] \
-#                   -tie_low_lib_cells [get_lib_cells $TIE_LOW] \
-#                   -max_fanout 5
-# }
+add_tie_cells -tie_high_lib_cells [get_lib_cells $TIE_HIGH] \
+                   -tie_low_lib_cells [get_lib_cells $TIE_LOW] 
 
 # Legalização incremental final
 legalize_placement -incremental

@@ -67,7 +67,7 @@ set DECAP_CELLS            "DCAP_LVT"
 set ANTENNA_DIODES          "ANTENNA_LVT"
 
 ###############################################################################
-	# TODO: descobrir onde tem spare cells no pdk
+# TODO: descobrir onde tem spare, endcap e tap cells no pdk
 # Spare cells
 # set SPARE_CELLS            "GBUFFD1 \
 #                             GINVD1 \
@@ -77,8 +77,8 @@ set ANTENNA_DIODES          "ANTENNA_LVT"
 # set ENDCAP_CELLS            "GFILL1"
 
 # TAP CELL (well/substrate)
-# set TAP_CELL                "SHFILL1_LVT"
-# set TAP_CELL_DISTANCE       "30"
+set TAP_CELL                "SHFILL1_LVT"
+set TAP_CELL_DISTANCE       "30"
 # set IO_FILLER_CELLS         ""
 ###############################################################################
 
