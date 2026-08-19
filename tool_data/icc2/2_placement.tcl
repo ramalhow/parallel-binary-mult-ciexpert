@@ -80,12 +80,12 @@ set_ignored_layers -min_routing_layer $BOTTOM_ROUTING_LAYER \
 set_app_options -name opt.power.mode  -value total
 set_app_options -name opt.area.effort -value high
 set_app_options -name opt.tie_cell.max_fanout -value $MAX_FANOUT
-#set_app_options -name opt.common.user_instance_name_prefix -value BUF_pOPT_
 
 # Opções de congestionamento e densidade
 set_app_options -name place.coarse.cong_restruct -value on
 set_app_options -name place.coarse.cong_restruct_effort -value ultra
 set_app_options -name place.coarse.pin_density_aware -value true
+set_app_options -name place.coarse.max_density -value 0.60
 set_app_options -name place.coarse.auto_density_control -value enhanced
 
 ###############################################################################
