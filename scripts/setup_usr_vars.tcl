@@ -37,3 +37,12 @@ set MAX_TLUPLUS_FILE   "$TECH_DIR/saed32nm_1p9m_Cmax.tluplus"
 set MIN_TLUPLUS_FILE   "$TECH_DIR/saed32nm_1p9m_Cmin.tluplus"
 set TLUPLUS_MAP_FILE   "$TECH_DIR/saed32nm_tf_itf_tluplus.map"
 #-----------------------------------------------------------------------------------------------
+
+###############################################################################
+# Fusion Compiler Settings
+###############################################################################
+set TCL_MCMM_SETUP_FILE ""
+
+set ROUTING_LAYER_DIRECTION_OFFSET_LIST "{M1 horizontal} {M2 vertical} {M3 horizontal} {M4 vertical} {M5 horizontal} {M6 vertical} {M7 horizontal} {M8 vertical} {M9 horizontal} {MRDL vertical} "
+set MIN_ROUTING_LAYER	  	  "M1"
+set MAX_ROUTING_LAYER 		  "M8"

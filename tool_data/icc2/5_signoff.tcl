@@ -25,11 +25,11 @@
 #                      - SPEF
 # -------------------------------------------------------------------------------------
 ###############################################################################
-# ICC2 Setup
+# Tech Setup
 ###############################################################################
-source      /path/to/tech_setup.tcl
-source      /path/to/icc2_setup.tcl
-set DLIB_DIR            "${PRJT_BASE}/dlib"
+source ../setup/tech_setup.tcl
+
+
 ###############################################################################
 # Design stage
 ###############################################################################
@@ -41,23 +41,22 @@ file mkdir                  ${RPT_DIR}/${DESIGN_STAGE}
 # Load Previous Stage Design
 ###############################################################################
 # Open created Design Library
-open_lib                ${DLIB_DIR}/${DESIGN}.dlib
+open_lib ${DLIB_DIR}/${DESIGN}.dlib
 
 # Make a copy of last stage block and rename to the new stage
-copy_block             -from ${DESIGN}/${PREV_STAGE} \
-                      -to ${DESIGN}/${DESIGN_STAGE}
+copy_block -from ${DESIGN}/${PREV_STAGE} -to ${DESIGN}/${DESIGN_STAGE}
 
 # Set the copy as the current design to work
-current_block		${DESIGN}/${DESIGN_STAGE}
+current_block ${DESIGN}/${DESIGN_STAGE}
 
-open_block              ${DESIGN}/${PREV_STAGE}
+open_block ${DESIGN}/${PREV_STAGE}
 
 #########################################################
 
 # Analysis scenarios
 get_scenarios
 report_scenarios -nosplit
-current_scenario
+current_scenario {tc}
 
 # Enable clock reconvergence pessimism removal as_user_default
 # Remove the pessimism from the timing calculation caused by charged clock paths
@@ -95,14 +94,8 @@ connect_pg_net              -net            VSS        [get_pins -physical_conte
 connect_pg_net              -net            VDD        [get_pins -physical_context */VDD]
 connect_pg_net              -net            VSS        [get_pins -physical_context */VSS]
 
-
-
-
 # Check Legality
 check_legality              > ${RPT_DIR}/${DESIGN_STAGE}/placement_legality.rpt
-
-# Option to save Milkyway with verilog names.
-change_names -rules verilog
 
 ###############################################################################
 # Report_power
@@ -165,9 +158,9 @@ report_constraints      -all_violators \
                         -scenarios [get_scenarios] \
                         > ${RPT_DIR}/${DESIGN_STAGE}/report_drv.rpt
 
-analyze_design_violations -type max_trans -fanout 5 -output ${RPT_DIR}/${DESIGN_STAGE}/analyze_design_violations
-analyze_design_violations -type setup     -fanout 5 -output ${RPT_DIR}/${DESIGN_STAGE}/analyze_design_violations
-analyze_design_violations -type hold      -fanout 5 -output ${RPT_DIR}/${DESIGN_STAGE}/analyze_design_violations
+analyze_design_violations -type max_trans -fanout $MAX_FANOUT -output ${RPT_DIR}/${DESIGN_STAGE}/analyze_design_violations
+analyze_design_violations -type setup     -fanout $MAX_FANOUT -output ${RPT_DIR}/${DESIGN_STAGE}/analyze_design_violations
+analyze_design_violations -type hold      -fanout $MAX_FANOUT -output ${RPT_DIR}/${DESIGN_STAGE}/analyze_design_violations
 
 
 ###############################################################################
@@ -210,7 +203,7 @@ check_pg_missing_vias   >   ${RPT_DIR}/${DESIGN_STAGE}/check_pg_missing_vias.rpt
 check_pg_connectivity   >   ${RPT_DIR}/${DESIGN_STAGE}/check_pg_connectivity.rpt
 
 # Report High Fanout nets
-source ${PRJT_BASE}/tools/icc2/ADDER/utils/rpt_high_fanout.tcl > ${RPT_DIR}/${DESIGN_STAGE}/report_high_fanout.rpt
+source ../setup/rpt_high_fanout.tcl > ${RPT_DIR}/${DESIGN_STAGE}/report_high_fanout.rpt
 
 # Shows only nets with fanout greater than 50 fanout.
 report_net_fanout       -threshold 50
@@ -219,12 +212,12 @@ report_utilization      > ${RPT_DIR}/${DESIGN_STAGE}/report_utilization_postSign
 
 # DRC
 #set_app_options -name signoff.check_drc.runset -value "/opt/cad/foundries/tsmc/CV013LPBCDPlus_OA/T013CVSP011K3_1.5f1p5m28k_5V_v1_2a_29Mar2019/Calibre/drc/calibre.drc"
-#set_app_options -name signoff.check_drc.enable_icv_explorer_mode -value true
-#set_app_options -name signoff.check_drc.max_errors_per_rule -value 200
-#set_app_options -name signoff.check_drc.run_dir -value ./signoff_drc_run
-#set_app_options -name signoff.check_drc.ignore_blockages_in_cells -value false
-#signoff_check_drc  >  ${RPT_DIR}/${DESIGN_STAGE}/report_drc.rpt
-#signoff_fix_drc
+set_app_options -name signoff.check_drc.enable_icv_explorer_mode -value true
+set_app_options -name signoff.check_drc.max_errors_per_rule -value 200
+set_app_options -name signoff.check_drc.run_dir -value ./signoff_drc_run
+set_app_options -name signoff.check_drc.ignore_blockages_in_cells -value false
+signoff_check_drc  >  ${RPT_DIR}/${DESIGN_STAGE}/report_drc.rpt
+signoff_fix_drc
 
 # Report Spare cells (check ${RPT_DIR}/${DESIGN_STAGE}/report_spare_cells.rpt)
 source ${PRJT_BASE}/tools/icc2/ADDER/utils/spare_cells.tcl

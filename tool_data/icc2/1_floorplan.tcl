@@ -59,6 +59,7 @@ set_attribute -name routing_direction [get_layer M6] -value vertical
 set_attribute -name routing_direction [get_layer M7] -value horizontal 
 set_attribute -name routing_direction [get_layer M8] -value vertical 
 set_attribute -name routing_direction [get_layer M9] -value horizontal 
+set_attribute -name routing_direction [get_layer MRDL] -value vertical 
 
 ###############################################################################
 # Coarse / Floorplan Placement & Congestion Optimization
@@ -184,8 +185,8 @@ report_qor -significant_digits 3 -scenarios [get_scenarios] > ${RPT_DIR}/${DESIG
 ###############################################################################
 # Export Deliverables (Abstract, DEF, Floorplan File)
 ###############################################################################
-create_abstract -read_only
-create_frame
+#create_abstract -read_only
+#create_frame
 
 write_floorplan -force -output ${OUT_DIR}/${DESIGN}.fp
 write_floorplan -force -output ${OUT_DIR}/${DESIGN}.fp.dc -net_types {power ground} -include_physical_status {fixed locked}

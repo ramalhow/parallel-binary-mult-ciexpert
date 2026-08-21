@@ -53,7 +53,7 @@ set_app_options -name cts.common.enable_auto_skew_target_for_local_skew -value t
 
 # Clock Tree Targets
 set CLK1_ROOT           i_clk
-set CTS_MAX_FANOUT      25
+set CTS_MAX_FANOUT      20
 set CLK1_BUFF_MAX_TRANS [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
 set CLK1_SINK_MAX_TRANS [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
 set CLK1_TARGET_SKEW    [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
@@ -68,8 +68,15 @@ set_max_transition $CLK1_SINK_MAX_TRANS [get_pins -hierarchical -filter "is_cloc
 ###############################################################################
 # CTS Tool Options & Routing Rules
 ###############################################################################
+# Remove qualquer propósito anterior
+set_lib_cell_purpose -exclude cts          [get_lib_cells */*]
+set_lib_cell_purpose -exclude optimization [get_lib_cells */*]
+set_lib_cell_purpose -exclude hold         [get_lib_cells */*]
+
 # Restrict allowed clock cells to designated CTS buffers/inverters
-set_lib_cell_purpose -include cts ${CLOCK_BUFFERS}
+set_lib_cell_purpose -include cts  "${CLOCK_BUFFERS} ${CLOCK_BUFFERS_INV}"
+set_lib_cell_purpose -include optimization "${CLOCK_BUFFERS} ${CLOCK_BUFFERS_INV}"
+set_lib_cell_purpose -include hold "${CLOCK_BUFFERS} ${CLOCK_BUFFERS_INV}"
 
 # Placement & Congestion Controls
 set_app_options -name clock_opt.place.congestion_effort -value high
@@ -80,13 +87,12 @@ set_app_options -name cts.compile.enable_global_route -value true
 set_app_options -name cts.common.max_fanout -value $CTS_MAX_FANOUT
 set_app_options -name clock_opt.flow.enable_ccd -value true
 
-# DRC & Hold corrections
-set_app_options -name clock_opt.flow.enable_hold_correction -value true
-set_app_options -name clock_opt.drc.max_capacitance -value true
+# Hold Fixing
+set_app_options -name refine_opt.hold.effort -value high
 
 # --- METAL LAYER RULES ---
 # Global Design Routing Limits
-set_ignored_layers -min_routing_layer M1 -max_routing_layer M9
+set_ignored_layers -min_routing_layer M2 -max_routing_layer M9
 
 # Clock Tree Routing Limits
 set BOTTOM_ROUTING_LAYER    M3
@@ -94,7 +100,8 @@ set TOP_ROUTING_LAYER       M8
 
 set_clock_routing_rules -clocks $CLK1_ROOT \
                         -min_routing_layer $BOTTOM_ROUTING_LAYER \
-                        -max_routing_layer $TOP_ROUTING_LAYER
+                        -max_routing_layer $TOP_ROUTING_LAYER \
+                        -default_rule
 
 # Pre-CTS clock check sanity
 check_clock_trees

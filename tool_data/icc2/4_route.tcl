@@ -48,7 +48,7 @@ current_scenario
 # Pre-Route Options & Antenna Rules
 ###############################################################################
 # Set signal routing layer bounds
-set BOTTOM_ROUTING_LAYER M1
+set BOTTOM_ROUTING_LAYER M3
 set TOP_ROUTING_LAYER    M9
 
 remove_ignored_layers -all
@@ -60,27 +60,24 @@ set_app_options -name route.detail.insert_diodes_during_routing -value true
 source -echo ${ANT_DIR}/saed32nm_ant_1p9m.tcl
 
 ###############################################################################
-# Timing, SI & Hold Configurations
-###############################################################################
-set_app_options -name route_opt.flow.enable_hold_routing -value true
-
-###############################################################################
 # Execute Routing Flow
 ###############################################################################
 # Step 1: Auto Routing (Global & Track assignment)
+
 route_auto
+
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeAuto -compress
 
-# Step 2: Route Optimization (Setup, Hold, and DRC optimization)
+# Step 2: Route Optimization
+set_app_options -name route_opt.flow.enable_ccd -value true
+set_app_options -name route_opt.flow.enable_clock_power_recovery -value auto
+set_app_options -name route_opt.flow.enable_ccd_clock_drc_fixing -value always_on
 route_opt
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeOpt -compress
 
-# Step 3: Incremental Route Optimization for DRVs
-set_app_options -name route_opt.flow.enable_drv_routing -value true
-route_opt -incremental
-
 # Step 4: Detail Routing (Final physical layout pass)
-route_detail -incremental true
+route_detail -initial_drc_from_input true
+#-incremental true
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeDetail -compress
 
 ###############################################################################

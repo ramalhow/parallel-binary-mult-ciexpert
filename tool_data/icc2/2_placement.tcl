@@ -49,6 +49,8 @@ check_design -checks physical_constraints
 # Tie Cell Setup (High/Low)
 suppress_message ATTR-12
 
+# Limit the fanout of each tie cell to avoid congestion issues
+set_app_options -name opt.tie_cell.max_fanout -value $MAX_FANOUT
 set_lib_cell_purpose -include optimization [get_lib_cells "$TIE_HIGH $TIE_LOW"]
 set_dont_touch [get_lib_cells "$TIE_HIGH $TIE_LOW"] false
 
@@ -61,14 +63,14 @@ set_lib_cell_purpose -exclude cts [get_lib_cells]
 set_lib_cell_purpose -include cts $CTS_CELLS
 unsuppress_message ATTR-12
 
-###############################################################################
-# Tap Cells Placement 
-###############################################################################
-create_tap_cells -lib_cell $TAP_CELL \
-                 -distance $TAP_CELL_DISTANCE \
-                 -pattern every_row \
-                 -separator "_" \
-                 -skip_fixed_cells
+# ###############################################################################
+# # Tap Cells Placement 
+# ###############################################################################
+# create_tap_cells -lib_cell $TAP_CELL \
+#                  -distance $TAP_CELL_DISTANCE \
+#                  -pattern every_row \
+#                  -separator "_" \
+#                  -skip_fixed_cells
 
 ###############################################################################
 # Placement & Routing Layer Options
@@ -81,14 +83,15 @@ remove_ignored_layers -all
 set_ignored_layers -min_routing_layer $BOTTOM_ROUTING_LAYER \
                    -max_routing_layer $TOP_ROUTING_LAYER
 
-# Global optimization app options
-set_app_options -name opt.power.mode  -value total
-set_app_options -name opt.area.effort -value high
-set_app_options -name opt.tie_cell.max_fanout -value $MAX_FANOUT
+# Enabling Global Route Based High-Fanout Synthesis
+set_app_options  -name  place_opt.initial_drc.global_route_based   -value 1
+set_app_options  -name  place_opt.initial_place.two_pass           -value true
+set_app_options  -name  place_opt.place.congestion_effort          -value high
 
 # Congestion and density control options
 set_app_options -name place.coarse.cong_restruct -value on
 set_app_options -name place.coarse.cong_restruct_effort -value ultra
+set_app_options -name place.coarse.congestion_expansion_direction -value both
 set_app_options -name place.coarse.pin_density_aware -value true
 set_app_options -name place.coarse.max_density -value 0.60
 set_app_options -name place.coarse.auto_density_control -value enhanced
@@ -102,8 +105,6 @@ create_placement -use_seed_locs -congestion -congestion_effort high -effort high
 legalize_placement -incremental
 
 place_opt
-
-set_app_options -name opt.area.effort -value high
 
 ###############################################################################
 # Tie Cells Insertion

@@ -41,7 +41,7 @@ check_workspace
 
 #current_lib TSMC_physical_only
 
-#source ${ANT_DIR}/antennaRule_n65_9lm.tcl
+#source ${ANT_DIR}/saed32nm_ant_1p9m.tcl
 
 #process_workspaces  -force -directory ${NDM_DIR} -output tsmcn65_9lmT2.ndm
 

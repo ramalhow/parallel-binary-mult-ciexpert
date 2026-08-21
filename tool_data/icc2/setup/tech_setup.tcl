@@ -43,10 +43,11 @@ set TIE_LOW                  "TIEL_LVT"
 set MAX_FANOUT              8
 
 # Clock Buffers
-set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2_LVT"
+set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2_LVT \
+							IBUFFX32_LVT IBUFFX16_LVT IBUFFX8_LVT IBUFFX4_LVT IBUFFX2_LVT"
 
-# TODO: definir isso tambem?
-# set CLOCK_ROOT_CELL         "GBUFFD8"
+set CLOCK_BUFFERS_INV       "INVX32_LVT INVX16_LVT INVX8_LVT INVX4_LVTINVX2_LVT INVX1_LVT INVX0_LVT"
+
 
 # Delay cells
 set DELAY_CELLS             "DELLN3X2_LVT DELLN2X2_LVT DELLN1X2_LVT"
@@ -77,8 +78,8 @@ set ANTENNA_DIODES          "ANTENNA_LVT"
 # set ENDCAP_CELLS            "GFILL1"
 
 # TAP CELL (well/substrate)
-set TAP_CELL                "SHFILL1_LVT"
-set TAP_CELL_DISTANCE       "30"
+set TAP_CELL                "GFILL"
+set TAP_CELL_DISTANCE       "40"
 # set IO_FILLER_CELLS         ""
 ###############################################################################
 
