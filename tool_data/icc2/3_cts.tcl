@@ -54,6 +54,7 @@ set_app_options -name cts.common.enable_auto_skew_target_for_local_skew -value t
 # Clock Tree Targets
 set CLK1_ROOT           i_clk
 set CTS_MAX_FANOUT      20
+set MAIN_CLK 3.333333
 set CLK1_BUFF_MAX_TRANS [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
 set CLK1_SINK_MAX_TRANS [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
 set CLK1_TARGET_SKEW    [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps

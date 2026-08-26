@@ -113,6 +113,9 @@ set_scenario_status tc -setup true \
 # Removes duplicate Scenarios, Modes and Corners for the current block
 remove_duplicate_timing_contexts
 
+file mkdir ${OUT_DIR}/${CURRENT_DLIB}
+file mkdir ${RPT_DIR}/${CURRENT_DLIB}
+
 # Generates a TCL script to check the constraints of each mode, corner and scenario
 write_script -force -output ${OUT_DIR}/${CURRENT_DLIB}/${DESIGN}_wscript
 
@@ -123,7 +126,7 @@ write_sdc    -output ${OUT_DIR}/${CURRENT_DLIB}/write_sdc_${DESIGN}.sdc
 # Checks and reports
 ###############################################################################
 check_timing          > ${RPT_DIR}/${CURRENT_DLIB}/check_timing.rpt
-report_scenarios -all > ${RPT_DIR}/${DESIGN}_report_scenarios.rpt
+report_scenarios -all > ${RPT_DIR}/${CURRENT_DLIB}/report_scenarios.rpt
 
 set scenarioNames [list wc tc]
 foreach scenario $scenarioNames {
