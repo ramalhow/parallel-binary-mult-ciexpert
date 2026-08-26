@@ -43,28 +43,18 @@ set sh_continue_on_error false
 
 # If label is used, the following will be used as label name while $DESIGN_NAME is the block name
 set INIT_DESIGN_BLOCK_NAME init_design			;# Name of the block to be saved for init_design.tcl
-set PLACE_OPT_BLOCK_NAME place_opt				;# Name of the block to be saved for place_opt.tcl
+set PLACE_OPT_BLOCK_NAME place_opt			;# Name of the block to be saved for place_opt.tcl
 set CLOCK_OPT_CTS_BLOCK_NAME clock_opt_cts		;# Name of the block to be saved for clock_opt_cts.tcl
-set CLOCK_OPT_OPTO_BLOCK_NAME clock_opt_opto	;# Name of the block to be saved for clock_opt_opto.tcl
+set CLOCK_OPT_OPTO_BLOCK_NAME clock_opt_opto		;# Name of the block to be saved for clock_opt_opto.tcl
 set CLOCK_OPT_BLOCK_NAME clock_opt      		;# CES: Name of the block to be saved after clock_opt
 set ROUTE_AUTO_BLOCK_NAME route_auto			;# Name of the block to be saved for route_auto.tcl
-set ROUTE_OPT_BLOCK_NAME route_opt				;# Name of the block to be saved for route_opt.tcl
+set ROUTE_OPT_BLOCK_NAME route_opt			;# Name of the block to be saved for route_opt.tcl
 set SIGNOFF_DRC_BLOCK_NAME signoff_drc 			;# Name of the block to be saved for signoff_drc.tcl
 set CHIP_FINISH_BLOCK_NAME chip_finish			;# Name of the block to be saved for chip_finish.tcl
-set PT_ECO_BLOCK_NAME pt_eco					;# Name of the block to be saved for pt_eco.tcl
+set PT_ECO_BLOCK_NAME pt_eco				;# Name of the block to be saved for pt_eco.tcl
 
-set PT_ECO_FROM_BLOCK_NAME $ROUTE_OPT_BLOCK_NAME 		;# Name of the starting block name for the pt_eco step
-set WRITE_DATA_BLOCK_NAME $CHIP_FINISH_BLOCK_NAME 		;# Name of the starting block for the write_data step
-
-set REPORT_QOR                          true ;# Default true; set to false to skip QoR reporting at end of each step
-#set REPORT_QOR_SCRIPT                   "report_qor.nosplit.tcl" ;# Default is report_qor.nosplit.tcl; report_qor.nosplit.tcl|report_qor.tcl;
-                                        ;# specify report_qor.tcl to use reporting commands without -nosplit options.
-## Directories
-set OUTPUTS_DIR "${OUT_DIR}/fusion"         	;# Directory to write output data files; mainly used by write_data.tcl
-set REPORTS_DIR "${RPT_DIR}/fusion"             ;# Directory to write reports; mainly used by report_qor.tcl
-
-if !{[file exists $OUTPUTS_DIR]} {file mkdir $OUTPUTS_DIR} ;# do not change this line or directory may not be created properly
-if !{[file exists $REPORTS_DIR]} {file mkdir $REPORTS_DIR} ;# do not change this line or directory may not be created properly
+set PT_ECO_FROM_BLOCK_NAME $ROUTE_OPT_BLOCK_NAME 	;# Name of the starting block name for the pt_eco step
+set WRITE_DATA_BLOCK_NAME $CHIP_FINISH_BLOCK_NAME 	;# Name of the starting block for the write_data step
 
 
 puts "RM-info: Completed script [info script]\n"

@@ -1,3 +1,9 @@
+
+###############################################################################
+# Setups
+###############################################################################
+
+# Project
 source ../setup/setup_fc.tcl
 
 # evitar reescrever as libs
@@ -14,7 +20,7 @@ set search_path "${OUT_DIR} ${RTL_DIR} $TECH_DIR"
 
 if { [file exists ${DLIB_DIR}/${DESIGN_FUSION}.dlib] } {
     open_lib ${DLIB_DIR}/${DESIGN_FUSION}.dlib
-    open_block ${DESIGN_FUSION}
+    open_block ${DESIGN}
 } else {
     create_lib -technology  $TECH_FILE -ref_libs $REFERENCE_LIBRARY ${DLIB_DIR}/${DESIGN_FUSION}.dlib
     
@@ -34,15 +40,19 @@ if { [file exists ${DLIB_DIR}/${DESIGN_FUSION}.dlib] } {
 read_parasitic_tech -layermap $TLUPLUS_MAP_FILE -tlup $MAX_TLUPLUS_FILE -name maxTLU
 read_parasitic_tech -layermap $TLUPLUS_MAP_FILE -tlup $MIN_TLUPLUS_FILE -name minTLU
 
-# 
+
+# reading the site_row from lef file
+read_tech_lef ${LEF_DIR}/saed32nm_lvt_1p9m.lef -design ${DESIGN} -merge_action add
+
 set_attribute [get_site_defs unit] symmetry Y
 set_attribute [get_site_defs unit] is_default true
 
-# metal via direction
+# suppresse the warning just for the init design
 suppress_message ATTR-12
+
+# metal via direction
 set_attribute [get_layers {M1 M3 M5 M7 M9}] routing_direction horizontal
 set_attribute [get_layers {M2 M4 M6 M8 MRDL}] routing_direction vertical
-unsuppress_message ATTR-12
 
 set_ignored_layers -max_routing_layer $MAX_ROUTING_LAYER
 
@@ -183,12 +193,6 @@ set_dont_touch [get_lib_cells */TIE*] false
 set_lib_cell_purpose -include optimization [get_lib_cells */TIE*]
 
 ###############################################################################
-# End off init_design
-###############################################################################
-save_lib
-save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
-
-###############################################################################
 # Auto Floorplan
 ###############################################################################
 set_auto_floorplan_constraints -shape R \
@@ -210,7 +214,7 @@ set_block_pin_constraints -self \
 set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2_LVT \
 							IBUFFX32_LVT IBUFFX16_LVT IBUFFX8_LVT IBUFFX4_LVT IBUFFX2_LVT"
 
-set CLOCK_BUFFERS_INV       "INVX32_LVT INVX16_LVT INVX8_LVT INVX4_LVTINVX2_LVT INVX1_LVT INVX0_LVT"
+set CLOCK_BUFFERS_INV       "INVX32_LVT INVX16_LVT INVX8_LVT INVX4_LVT INVX2_LVT INVX1_LVT INVX0_LVT"
 
 set_lib_cell_purpose -exclude cts [get_lib_cells]
 set_dont_touch ${CLOCK_BUFFERS} false
@@ -237,12 +241,80 @@ set_clock_tree_options -clocks $CLK1_ROOT -target_skew $CLK1_TARGET_SKEW
 set_max_transition $CLK1_BUFF_MAX_TRANS [get_clocks ${CLK1_ROOT}] -clock_path
 set_max_transition $CLK1_SINK_MAX_TRANS [get_pins -hierarchical -filter "is_clock_pin == true"]
 
+
+###############################################################################
+# End off init_design
+###############################################################################
+save_lib
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+unsuppress_message ATTR-12
+
 ###############################################################################
 # 1° stage = initial_map
 ###############################################################################
+set DESIGN_STAGE "initial_map"
 
-compile_fusion -from initial_map -to initial_map
-save_block -compress -as ${DESIGN_FUSION}/initial_map
+# OBS: como esse stage é o primeiro, ainda não definimos o last stage
+compile_fusion -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
 
+report_qor
 report_transformed_registers
 report_clock_gating
+
+###############################################################################
+# 2° stage = logic_opto
+###############################################################################
+set LAST_STAGE $DESIGN_STAGE
+set DESIGN_STAGE "logic_opto"
+
+compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+
+###############################################################################
+# 3° stage = initial_place
+###############################################################################
+set LAST_STAGE $DESIGN_STAGE
+set DESIGN_STAGE "initial_place"
+
+compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+
+###############################################################################
+# 4° stage = initial_drc
+###############################################################################
+set LAST_STAGE $DESIGN_STAGE
+set DESIGN_STAGE "initial_drc"
+
+compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+###############################################################################
+# 5° stage = initial_opto
+###############################################################################
+set LAST_STAGE $DESIGN_STAGE
+set DESIGN_STAGE "initial_opto"
+
+compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+###############################################################################
+# 6° stage = final_place
+###############################################################################
+set LAST_STAGE $DESIGN_STAGE
+set DESIGN_STAGE "final_place"
+
+compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+###############################################################################
+# 7° stage = final_opto
+###############################################################################
+set LAST_STAGE $DESIGN_STAGE
+set DESIGN_STAGE "final_opto"
+
+compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
+save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}

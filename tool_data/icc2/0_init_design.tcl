@@ -74,7 +74,7 @@ set_app_options -name opt.port.eliminate_verilog_assign -value true
 ###############################################################################
 # Create & Activate Analysis Scenarios
 ###############################################################################
-source ../../scripts/scenarios.tcl
+source ../setup/scenarios.tcl
 
 # Ensure all loaded MMMC scenarios are enabled
 set_scenario_status -active true [all_scenarios]
