@@ -13,7 +13,8 @@
 ###############################################################################
 # Tech & ICC2 Setup
 ###############################################################################
-source ../setup/tech_setup.tcl
+source ../../../scripts/setup_vars.tcl
+source ../../../scripts/tech_setup.tcl
 
 set PREV_STAGE   "floorplan"
 set DESIGN_STAGE "placement"
@@ -144,7 +145,7 @@ save_lib
 save_block -as ${DESIGN}/${DESIGN_STAGE} -compress
 
 echo "*****************************************************************************************"
-puts "\[VIRTUS-CC\] INFO: The ${DESIGN_STAGE} stage for ${DESIGN} completed successfully."
+puts "INFO: The ${DESIGN_STAGE} stage for ${DESIGN} completed successfully."
 echo "*****************************************************************************************"
 date
 return

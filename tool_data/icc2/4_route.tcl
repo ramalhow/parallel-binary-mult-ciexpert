@@ -14,7 +14,8 @@
 ###############################################################################
 # Tech & ICC2 Setup
 ###############################################################################
-source ../setup/tech_setup.tcl
+source ../../../scripts/setup_vars.tcl
+source ../../../scripts/tech_setup.tcl
 
 set PREV_STAGE   "cts"
 set DESIGN_STAGE "route"
@@ -57,7 +58,7 @@ set_ignored_layers -min_routing_layer ${BOTTOM_ROUTING_LAYER} \
 
 # Antenna Rules and Diode Insertion
 set_app_options -name route.detail.insert_diodes_during_routing -value true
-source -echo ${ANT_DIR}/saed32nm_ant_1p9m.tcl
+source -echo ${TECH_DIR}/saed32nm_ant_1p9m.tcl
 
 ###############################################################################
 # Execute Routing Flow

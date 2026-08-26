@@ -13,7 +13,8 @@
 ###############################################################################
 # Tech & ICC2 Setup
 ###############################################################################
-source ../setup/tech_setup.tcl
+source ../../../scripts/setup_vars.tcl
+source ../../../scripts/tech_setup.tcl
 
 set DESIGN_STAGE "init_design"
 set search_path "${OUT_DIR}/PRE_LAYOUT $TECH_DIR"
@@ -74,7 +75,8 @@ set_app_options -name opt.port.eliminate_verilog_assign -value true
 ###############################################################################
 # Create & Activate Analysis Scenarios
 ###############################################################################
-source ../setup/scenarios.tcl
+set CURRENT_DLIB ${DESIGN}
+source ../../../scripts/scenarios.tcl
 
 # Ensure all loaded MMMC scenarios are enabled
 set_scenario_status -active true [all_scenarios]
@@ -95,7 +97,7 @@ save_block -compress -as ${DESIGN}/${DESIGN_STAGE}
 ###############################################################################
 # ICC2 Reporting
 ###############################################################################
-puts "\[VIRTUS-CC\] INFO: Generating Init Design Reports..."
+puts "INFO: Generating Init Design Reports..."
 
 report_lib \
         -timing_arcs \
@@ -124,7 +126,7 @@ report_scenarios > ${RPT_DIR}/${DESIGN_STAGE}/report_scenarios.rpt
 report_constraints -all_violators > ${RPT_DIR}/${DESIGN_STAGE}/report_constraints.rpt
 
 echo "*****************************************************************************************"
-puts "\[VIRTUS-CC\] INFO: The ${DESIGN_STAGE} stage for ${DESIGN} has been completed successfully."
+puts "INFO: The ${DESIGN_STAGE} stage for ${DESIGN} has been completed successfully."
 echo "*****************************************************************************************"
 date
 return

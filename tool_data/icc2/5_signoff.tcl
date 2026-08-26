@@ -1,13 +1,4 @@
 # -------------------------------------------------------------------------------------
-# Copyright (c) 2026 VIRTUS CC-UFCG. All rights reserved
-# VIRTUS CC-UFCG Confidential Proprietary
-#
-# Copy, distribuition or use of this code is not allowed without
-# VIRTUS CC-UFCG explicit written consent.
-# -------------------------------------------------------------------------------------
-#
-# Id: signoff.tcl_2026-06-05_by_LuizHenriqueNascimento
-#
 # Project: 	   CI Expert/UFCG - Physical Design Track
 # Description: Signoff script:
 #                 * Add filler cells
@@ -27,7 +18,8 @@
 ###############################################################################
 # Tech Setup
 ###############################################################################
-source ../setup/tech_setup.tcl
+source ../../../scripts/setup_vars.tcl
+source ../../../scripts/tech_setup.tcl
 
 
 ###############################################################################
@@ -315,15 +307,10 @@ write_def               -include_tech_via_definitions \
                         -include_pad_owned_terminals \
                         ${OUT_DIR}/${DESIGN}.def
 
-###############################################################################
-###############################################################################
-########################### FINISH SIGNOFF ####################################
-###############################################################################
-###############################################################################
 echo "*****************************************************************************************"
 echo "*****************************************************************************************"
-puts "\[VIRTUS-CC\] INFO: The ${DESIGN_STAGE} for the ${DESIGN} has been completed."
-puts "\[VIRTUS-CC\] INFO: Calling GUI ..."
+puts "INFO: The ${DESIGN_STAGE} for the ${DESIGN} has been completed."
+puts "INFO: Calling GUI ..."
 echo "*****************************************************************************************"
 echo "*****************************************************************************************"
 date

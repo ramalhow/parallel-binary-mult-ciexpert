@@ -6,7 +6,20 @@
 # Author: Arthur Ramalho
 #########################################################################
 
-source ../../../scripts/setup_usr_vars.tcl
+###############################################################################
+# Tech Files Variables
+###############################################################################
+set TECH_FILE           "${TECH_DIR}/saed32nm_1p9m.tf"
+set REFERENCE_LIBRARY   [glob ${NDM_DIR}/*.ndm]
+
+#-----------------------------------------------------------------------------------------------
+# TLU plus file (similar to captable)
+set TLUPLUS_TYP_FILE   "$TECH_DIR/saed32nm_1p9m_nominal.tluplus"
+set MAX_TLUPLUS_FILE   "$TECH_DIR/saed32nm_1p9m_Cmax.tluplus"
+set MIN_TLUPLUS_FILE   "$TECH_DIR/saed32nm_1p9m_Cmin.tluplus"
+set TLUPLUS_MAP_FILE   "$TECH_DIR/saed32nm_tf_itf_tluplus.map"
+#-----------------------------------------------------------------------------------------------
+
 
 ###############################################################################
 # Power/Ground Variables
@@ -89,6 +102,6 @@ set TAP_CELL_DISTANCE       "40"
 ###############################################################################
 echo "********************************************************************************"
 echo "********************************************************************************"
-puts "\[VIRTUS-CC\] INFO: The Technology Setup for the ${DESIGN} has been completed."
+puts "INFO: The Technology Setup for the ${DESIGN} has been completed."
 echo "********************************************************************************"
 echo "********************************************************************************"

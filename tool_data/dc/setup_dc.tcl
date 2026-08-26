@@ -6,7 +6,7 @@
 # Author: Arthur Ramalho
 ########################################################################
 
-source ../../../scripts/setup_usr_vars.tcl
+source ../../../scripts/setup_vars.tcl
 
 ########################################################################
 # Work library
@@ -15,7 +15,7 @@ source ../../../scripts/setup_usr_vars.tcl
 # Maps a design library to a UNIX directory.
 # in this case, we're mapping the current working dir to save the outputs
 # as long as we're using this script.
-#file mkdir "WORK"
+
 define_design_lib WORK -path .
 
 ########################################################################
@@ -32,16 +32,7 @@ set_host_options -max_cores 8
 set search_path "$DB_DIR $RTL_DIR"
 
 # Target libraries
-
-# currently we have 2 db options to choose
-# base on the index 
 set design_libraries [glob ${DB_DIR}/*.db]
-
-# TODO: select based on the scenario
-# for now, we choose the first
-#set db_index 1 
-#set target_library [lindex $design_libraries $db_index]
-
 set target_library $design_libraries
 
 # Synthetic library

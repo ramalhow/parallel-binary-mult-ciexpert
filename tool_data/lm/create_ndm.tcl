@@ -1,21 +1,15 @@
-
-# ###############################################################################
-# ###############################################################################
-# #####                        create_ndm III                              ######
-# ###############################################################################
-# ###############################################################################
-source ../../../scripts/setup_usr_vars.tcl
+source ../../scripts/setup_vars.tcl
 
 set DESIGN_STAGE "create_ndm"
 
 set bus_delimeter {[]}
 set sh_continue_on_error true 
 
-set_app_options -as_user_default -name link.require_physical -value true; #<<<<<<<<<
-set_app_options -as_user_default -name design.bus_delimiters -value $bus_delimeter; #<<<<<<<<<
-set_app_options -as_user_default -name lib.logic_model.use_db_rail_names -value true; #<<<<<<<<<
+set_app_options -as_user_default -name link.require_physical -value true;
+set_app_options -as_user_default -name design.bus_delimiters -value $bus_delimeter;
+set_app_options -as_user_default -name lib.logic_model.use_db_rail_names -value true;
 
-create_workspace SAED32 -tech $TECH_DIR -flow exploration
+create_workspace SAED32 -tech $TECH_DIR/saed32nm_1p9m.tf -flow exploration
 
 set db_files [glob [join "${DB_DIR}/*.db"]]
 read_db $db_files
