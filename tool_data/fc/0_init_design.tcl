@@ -43,7 +43,7 @@ if { [file exists ${DLIB_DIR}/${DLIB_FUSION}.dlib] } {
 
     #source ../setup/create_ndm.tcl 
 
-    create_lib -technology  $TECH_FILE -ref_libs $REFERENCE_LIBRARY ${DLIB_DIR}/${DESIGN_FUSION}.dlib
+    create_lib -technology  $TECH_FILE -ref_libs $REFERENCE_LIBRARY ${DLIB_DIR}/${DLIB_FUSION}.dlib
     
     analyze -format verilog ${DESIGN}.v
     elaborate ${DESIGN}
@@ -69,18 +69,18 @@ suppress_message ATTR-12
 set_attribute [get_layers {M1 M3 M5 M7 M9}] routing_direction horizontal
 set_attribute [get_layers {M2 M4 M6 M8 MRDL}] routing_direction vertical
 
-set_ignored_layers -max_routing_layer $MAX_ROUTING_LAYER
+#set_ignored_layers -max_routing_layer $MAX_ROUTING_LAYER
 
 ###############################################################################
 # Scenarios and Constraints
 ###############################################################################
 
+# loading and applying the constraints
+source ../../../scripts/constraints.tcl
+
 # loading the scenarios
 set CURRENT_DLIB ${DLIB_FUSION}
 source ../../../scripts/scenarios.tcl
-
-# loading and applying the constraints
-source ../../../scripts/constraints.tcl
 
 ###############################################################################
 # Tie Cells
@@ -95,7 +95,7 @@ set_auto_floorplan_constraints -shape R \
                      -orientation N \
                      -side_ratio {1 1 1 1} \
                      -core_offset {3} \
-                     -core_utilization 0.55
+                     -core_utilization 0.55 \
                      -use_site_row
 
 set_block_pin_constraints -self \
@@ -143,6 +143,6 @@ set_max_transition $CLK1_SINK_MAX_TRANS [get_pins -hierarchical -filter "is_cloc
 # End off init_design
 ###############################################################################
 save_lib
-save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+save_block -compress -as ${DLIB_FUSION}/${DESIGN_STAGE}
 
 unsuppress_message ATTR-12

@@ -72,6 +72,3 @@ set_load -max $MAX_OUTPUT_LOAD [all_outputs]
 
 set_input_transition -min $MIN_INPUT_TRANST [all_inputs -exclude_clock_ports]
 set_input_transition -max $MAX_INPUT_TRANST [all_inputs -exclude_clock_ports]
-
-set_scenario_status -active true [all_scenarios]
-current_scenario tc

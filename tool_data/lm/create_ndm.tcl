@@ -21,15 +21,15 @@ group_libs
 
 process_workspaces  -force -directory $NDM_DIR -output ${DESIGN_STAGE}.ndm
 
+remove_workspace
 ###############################################################################
 # TODO: Antenna Setup
 # Antenna Rules
 ###############################################################################
-remove_workspace
 
-create_workspace -flow edit $[glob ${NDM_DIR}/*.ndm]
+#create_workspace -flow edit $[glob ${NDM_DIR}/*.ndm]
 
-check_workspace 
+#check_workspace 
 
 # Antenna properties
 

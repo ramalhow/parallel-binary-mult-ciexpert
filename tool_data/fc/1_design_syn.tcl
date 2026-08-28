@@ -38,6 +38,8 @@ set DESIGN_STAGE "initial_place"
 compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
 save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
 
+all_high_transitive_fanout -nets -threshold 100
+report_design
 
 ###############################################################################
 # 4° stage = initial_drc
@@ -47,6 +49,9 @@ set DESIGN_STAGE "initial_drc"
 
 compile_fusion -from $LAST_STAGE -to $DESIGN_STAGE
 save_block -compress -as ${DESIGN_FUSION}/${DESIGN_STAGE}
+
+report_design
+report_congestion -rerun_global_router
 
 ###############################################################################
 # 5° stage = initial_opto
