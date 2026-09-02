@@ -112,6 +112,8 @@ set_scenario_status tc -setup true \
 
 #set_scenario_status -active true [all_scenarios]
 
+#set_scenario_status -active true [all_scenarios]
+
 # Removes duplicate Scenarios, Modes and Corners for the current block
 remove_duplicate_timing_contexts
 
@@ -119,7 +121,12 @@ remove_duplicate_timing_contexts
 file mkdir ${OUT_DIR}/${CURRENT_DLIB}/
 file mkdir ${RPT_DIR}/${CURRENT_DLIB}/
 
+# Folders for the results
+file mkdir ${OUT_DIR}/${CURRENT_DLIB}/
+file mkdir ${RPT_DIR}/${CURRENT_DLIB}/
+
 # Generates a TCL script to check the constraints of each mode, corner and scenario
+#write_script -force -output ${OUT_DIR}/${CURRENT_DLIB}/${DESIGN}_wscript
 #write_script -force -output ${OUT_DIR}/${CURRENT_DLIB}/${DESIGN}_wscript
 
 # Write SDC to check the loaded constraints
@@ -130,10 +137,14 @@ write_sdc    -output ${OUT_DIR}/${CURRENT_DLIB}/write_sdc_${DESIGN}.sdc
 ###############################################################################
 check_timing          > ${RPT_DIR}/${CURRENT_DLIB}/check_timing.rpt
 report_scenarios -all > ${RPT_DIR}/${CURRENT_DLIB}/report_scenarios.rpt
+report_scenarios -all > ${RPT_DIR}/${CURRENT_DLIB}/report_scenarios.rpt
 
 set scenarioNames [list wc tc]
 foreach scenario $scenarioNames {
     current_scenario $scenario
+    report_exceptions        > ${RPT_DIR}/${CURRENT_DLIB}/report_exceptions_$scenario.rpt
+    report_case_analysis     > ${RPT_DIR}/${CURRENT_DLIB}/report_case_analysis_$scenario.rpt
+    report_disable_timing    > ${RPT_DIR}/${CURRENT_DLIB}/report_disable_timing_$scenario.rpt
     report_exceptions        > ${RPT_DIR}/${CURRENT_DLIB}/report_exceptions_$scenario.rpt
     report_case_analysis     > ${RPT_DIR}/${CURRENT_DLIB}/report_case_analysis_$scenario.rpt
     report_disable_timing    > ${RPT_DIR}/${CURRENT_DLIB}/report_disable_timing_$scenario.rpt

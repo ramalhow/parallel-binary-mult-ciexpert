@@ -9,8 +9,8 @@
 
 set DESIGN      "parallel_binary_mult"
 
-#set PRJT_BASE   "/home/arthur.alves/parallel-binary-mult-ciexpert"
-set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/parallel-binary-mult-ciexpert"
+set PRJT_BASE   "/home/arthur.alves/parallel-binary-mult-ciexpert"
+#set PRJT_BASE   "/home/xmen-aluno/physical_design_arthur/parallel-binary-mult-ciexpert"
 
 set SDC_DIR     "${PRJT_BASE}/constraints"
 set DB_DIR      "${PRJT_BASE}/db"

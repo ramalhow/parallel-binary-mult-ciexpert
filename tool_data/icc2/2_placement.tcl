@@ -78,7 +78,7 @@ unsuppress_message ATTR-12
 ###############################################################################
 # Define signal routing layer bounds
 set BOTTOM_ROUTING_LAYER M2
-set TOP_ROUTING_LAYER M8
+set TOP_ROUTING_LAYER M9
 
 remove_ignored_layers -all
 set_ignored_layers -min_routing_layer $BOTTOM_ROUTING_LAYER \

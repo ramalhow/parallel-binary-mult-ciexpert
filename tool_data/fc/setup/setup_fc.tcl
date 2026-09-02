@@ -9,3 +9,6 @@
 ###############################################################################
 # Fusion Compiler Settings
 ###############################################################################
+
+# Diferenciando o nome das dlibs pra evitar corrompimento das dlibs já existentes
+set DLIB_FUSION ${DESIGN}_fusion

@@ -26,38 +26,24 @@ source ../setup/setup_fc.tcl
 # Initialize the design
 ###############################################################################
 
-# Diferenciando o nome das dlibs pra evitar corrompimento das dlibs já existentes
-set DLIB_FUSION ${DESIGN}_fusion
-
 # Current Stage
 set DESIGN_STAGE "init_design"
 
-if { [file exists ${DLIB_DIR}/${DLIB_FUSION}.dlib] } {
-    puts "\[INFO\] SETUP: Existing Dlib found at ${DLIB_DIR}/${DLIB_FUSION}.dlib. Loading block..."
+# TODO: create a new dlib with the reference library and the design
+#source ../setup/create_ndm.tcl 
 
-    open_lib ${DLIB_DIR}/${DLIB_FUSION}.dlib
-    open_block ${DESIGN}
+create_lib -technology  $TECH_FILE -ref_libs $REFERENCE_LIBRARY ${DLIB_DIR}/${DLIB_FUSION}.dlib
 
-} else {
-    puts "\[INFO\] SETUP: No existing Dlib found. Creating database from scratch..."
-
-    #source ../setup/create_ndm.tcl 
-
-    create_lib -technology  $TECH_FILE -ref_libs $REFERENCE_LIBRARY ${DLIB_DIR}/${DLIB_FUSION}.dlib
-    
-    analyze -format verilog ${DESIGN}.v
-    elaborate ${DESIGN}
-    set_top_module ${DESIGN}
-
-    current_block
-}
+analyze -format verilog ${DESIGN}.v
+elaborate ${DESIGN}
+set_top_module ${DESIGN}
 
 ###############################################################################
 # Tech Setup
 ###############################################################################
 
 # reading the site_row from lef file
-read_tech_lef ${LEF_DIR}/saed32nm_lvt_1p9m.lef -design ${DESIGN} -merge_action add
+#read_tech_lef ${LEF_DIR}/saed32nm_lvt_1p9m.lef -design ${DESIGN} -merge_action add
 
 set_attribute [get_site_defs unit] symmetry Y
 set_attribute [get_site_defs unit] is_default true
@@ -94,12 +80,11 @@ set_lib_cell_purpose -include optimization [get_lib_cells */TIE*]
 set_auto_floorplan_constraints -shape R \
                      -orientation N \
                      -side_ratio {1 1 1 1} \
-                     -core_offset {3} \
-                     -core_utilization 0.55 \
-                     -use_site_row
+                     -core_offset {10} \
+                     -core_utilization 0.55
 
 set_block_pin_constraints -self \
-                          -pin_spacing_distance 4 \
+                          -pin_spacing_distance 8 \
                           -sides {1 2 3 4} \
                           -allowed_layers {M4 M5 M6 M7} \
                           -hard_constraints {location spacing layer}
@@ -138,11 +123,34 @@ set_clock_tree_options -clocks $CLK1_ROOT -target_skew $CLK1_TARGET_SKEW
 set_max_transition $CLK1_BUFF_MAX_TRANS [get_clocks ${CLK1_ROOT}] -clock_path
 set_max_transition $CLK1_SINK_MAX_TRANS [get_pins -hierarchical -filter "is_clock_pin == true"]
 
-
 ###############################################################################
 # End off init_design
 ###############################################################################
+<<<<<<< Updated upstream:tool_data/fc/0_init_design.tcl
 save_lib
 save_block -compress -as ${DLIB_FUSION}/${DESIGN_STAGE}
+=======
+>>>>>>> Stashed changes:tool_data/fc/init_design.tcl
+
+file mkdir ${RPT_DIR}/FUSION/${DESIGN_STAGE}
+report_lib \
+        -timing_arcs \
+        -parasitic_tech \
+        -physical \
+        -antenna \
+        -routability \
+        -pattern_must_join_pin \
+        -placement_constraints \
+        -wire_tracks \
+        -wire_track_colors \
+        -verbose \
+        -include_db_mapping \
+        -cell_summary \
+        -char_model \
+        [current_lib] > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_reference.rpt
+
+
+save_block -compress -as ${DLIB_FUSION}/${DESIGN_STAGE}
+save_lib
 
 unsuppress_message ATTR-12

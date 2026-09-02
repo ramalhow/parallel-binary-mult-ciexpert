@@ -35,7 +35,7 @@ set_attribute [get_ports VDD] port_type power
 set_attribute [get_ports VSS] port_type ground
 
 # Enable Clock Reconvergence Pessimism Removal (CRPR)
-set_app_options -as_user_default -name time.remove_clock_reconvergence_pessimism -value true
+#set_app_options -as_user_default -name time.remove_clock_reconvergence_pessimism -value true
 
 # Setup SVF for Formality equivalence checking
 set_svf -append ${OUT_DIR}/${DESIGN}.svf
@@ -43,7 +43,7 @@ set_svf -append ${OUT_DIR}/${DESIGN}.svf
 # Analysis Scenarios Configuration
 get_scenarios
 report_scenarios -nosplit
-current_scenario
+current_scenario tc
 
 ###############################################################################
 # Pre-Route Options & Antenna Rules
@@ -64,21 +64,28 @@ source -echo ${TECH_DIR}/saed32nm_ant_1p9m.tcl
 # Execute Routing Flow
 ###############################################################################
 # Step 1: Auto Routing (Global & Track assignment)
+set_app_options -name route.global.timing_driven -value true
+set_app_options -name route.global.timing_driven_effort_level -value high
+set_app_options -name route.track.timing_driven -value true
 
 route_auto
-
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeAuto -compress
 
 # Step 2: Route Optimization
 set_app_options -name route_opt.flow.enable_ccd -value true
 set_app_options -name route_opt.flow.enable_clock_power_recovery -value auto
 set_app_options -name route_opt.flow.enable_ccd_clock_drc_fixing -value always_on
+
 route_opt
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeOpt -compress
 
 # Step 4: Detail Routing (Final physical layout pass)
+set_app_options -name route.detail.timing_driven -value true
+set_app_options -name route.detail.incremental_detail_route_special_design_rule_fixing_stage -value early_routing
+
 route_detail -initial_drc_from_input true
-#-incremental true
+route_detail -incremental true
+
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeDetail -compress
 
 ###############################################################################
@@ -98,7 +105,7 @@ check_routes -report_all_open_nets true \
 report_design -routing > ${RPT_DIR}/${DESIGN_STAGE}/report_route.rpt
 
 # Congestion Map & Statistics
-route_global -congestion_map_only true
+#route_global -congestion_map_only true
 report_congestion -rerun_global_router > ${RPT_DIR}/${DESIGN_STAGE}/report_congestion.rpt
 
 # Power, Utilization, and PG Connectivity Checks

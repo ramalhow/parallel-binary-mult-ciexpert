@@ -1,75 +1,53 @@
 ########################################################################
 # Project: CI Expert 2026 - Parallel Binary Multiplier
-# Id: floorplan.tcl
-# Description: Floorplan Creation Script:
-#                * Defines IO cells (if necessary)
-#                * Defines Floorplan
-#                * Defines Powerplan
-#                * Routes power nets
-# Version: 2026-08-19
+# Id: 2_floorplan.tcl
+# Description: 
+# Version: 2026-07-02
 # Author: Arthur Ramalho
 #########################################################################
 
 ###############################################################################
-# Tech & ICC2 Setup
+# Project Setup
 ###############################################################################
 source ../../../scripts/setup_vars.tcl
+
+set_app_var search_path ". ${DB_DIR} ${DLIB_DIR} ${NDM_DIR} ${RTL_DIR} ${TECH_DIR}"
+
+# Tech setup
 source ../../../scripts/tech_setup.tcl
 
-set PREV_STAGE   "init_design"
+# Setup the fusion compiler specific settings
+source ../setup/setup_fc.tcl
+
+# Reading the design data
+open_lib ${DLIB_DIR}/${DLIB_FUSION}.dlib
+set LAST_STAGE "final_opto"
 set DESIGN_STAGE "floorplan"
 
-file mkdir ${RPT_DIR}/${DESIGN_STAGE}
+copy_block -from ${DLIB_FUSION}/${LAST_STAGE} -to ${DLIB_FUSION}/${DESIGN_STAGE}
+current_block ${DLIB_FUSION}/${DESIGN_STAGE}
 
 ###############################################################################
-# ICC2 Open Library & Copy Block
+# floorplan initialization
 ###############################################################################
-open_lib $DLIB_DIR/${DESIGN}.dlib
 
-copy_block -from ${DESIGN}/${PREV_STAGE} -to ${DESIGN}/${DESIGN_STAGE}
-current_block ${DESIGN}/${DESIGN_STAGE}
+# initialize_floorplan -shape R \
+#                      -orientation N \
+#                      -side_ratio {1 1 1 1} \
+#                      -core_offset {10} \
+#                      -core_utilization 0.55
 
-# Activate all MMMC scenarios
-set_scenario_status -active true [all_scenarios]
-report_scenarios -nosplit
+# shape_blocks
 
-# Load and enforce SDC constraints
-read_sdc ${SDC_DIR}/${DESIGN}.sdc
+# create_placement -floorplan
 
-set_svf -append ${OUT_DIR}/${DESIGN}.svf
+# set_block_pin_constraints -self \
+#                           -pin_spacing_distance 8 \
+#                           -sides {1 2 3 4} \
+#                           -allowed_layers {M4 M5 M6 M7} \
+#                           -hard_constraints {location spacing layer}
 
-###############################################################################
-# Floorplan Initialization (Core Area & Utilization)
-###############################################################################
-# Core Utilization ~55%, 3.0um boundary offset, 1:1 aspect ratio
-initialize_floorplan -shape R \
-                     -orientation N \
-                     -side_ratio {1 1 1 1} \
-                     -core_offset {10} \
-                     -core_utilization 0.55
-
-###############################################################################
-# Routing Directions Setup
-###############################################################################
-set_attribute -name routing_direction [get_layer M1] -value horizontal 
-set_attribute -name routing_direction [get_layer M2] -value vertical 
-set_attribute -name routing_direction [get_layer M3] -value horizontal 
-set_attribute -name routing_direction [get_layer M4] -value vertical 
-set_attribute -name routing_direction [get_layer M5] -value horizontal
-set_attribute -name routing_direction [get_layer M6] -value vertical 
-set_attribute -name routing_direction [get_layer M7] -value horizontal 
-set_attribute -name routing_direction [get_layer M8] -value vertical 
-set_attribute -name routing_direction [get_layer M9] -value horizontal 
-set_attribute -name routing_direction [get_layer MRDL] -value vertical 
-
-###############################################################################
-# Coarse / Floorplan Placement & Congestion Optimization
-###############################################################################
-set_app_options -name plan.place.congestion_driven_mode -value both
-set_app_options -name place.coarse.cong_restruct -value on
-set_app_options -name place.coarse.cong_restruct_effort -value ultra
-
-create_placement -floorplan -congestion -congestion_effort high
+# place_pins -self
 
 ###############################################################################
 # Logical Power & Ground Connections (Prevents floating PG pin errors)
@@ -145,20 +123,6 @@ set_pg_strategy pg_strategy9 -core -pattern {{pattern: pg_mesh9} {nets: {VSS VDD
 compile_pg -strategies pg_strategy9
 
 ###############################################################################
-# Pin Placement & Constraints
-###############################################################################
-legalize_placement
-
-# Constrain all 130 I/O pins with 4um pitch strictly across layers M4 to M7
-set_block_pin_constraints -self \
-                          -pin_spacing_distance 8 \
-                          -sides {1 2 3 4} \
-                          -allowed_layers {M4 M5 M6 M7} \
-                          -hard_constraints {location spacing layer}
-
-place_pins -self
-
-###############################################################################
 # Global Routing Check & Blockage Cleanup
 ###############################################################################
 remove_placement_blockages -all -verbose
@@ -169,19 +133,23 @@ route_global -floorplan true -congestion_map_only true
 ###############################################################################
 # Reports & Quality Checks
 ###############################################################################
-report_design -floorplan                     > ${RPT_DIR}/${DESIGN_STAGE}/report_design.rpt
-report_utilization                           > ${RPT_DIR}/${DESIGN_STAGE}/report_utilization.rpt
-check_legality                               > ${RPT_DIR}/${DESIGN_STAGE}/check_legality.rpt
-report_ports                                 > ${RPT_DIR}/${DESIGN_STAGE}/report_ports.rpt
-report_pg_strategies                         > ${RPT_DIR}/${DESIGN_STAGE}/report_pg_stategies.rpt
+file mkdir ${RPT_DIR}/FUSION/${DESIGN_STAGE}
+
+report_design -floorplan                     > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_design.rpt
+report_constraint -all_violators -significant_digits 4 \
+                                             > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_constraints_violators.rpt
+report_utilization                           > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_utilization.rpt
+check_legality                               > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/check_legality.rpt
+report_ports                                 > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_ports.rpt
+report_pg_strategies                         > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_pg_stategies.rpt
 
 # Structural Power Grid Checks
-check_pg_connectivity -check_std_cell_pins none > ${RPT_DIR}/${DESIGN_STAGE}/check_pg_connectivity.rpt
-check_pg_drc -ignore_std_cells               > ${RPT_DIR}/${DESIGN_STAGE}/check_pg_drc.rpt
-check_pg_missing_vias                        > ${RPT_DIR}/${DESIGN_STAGE}/check_pg_missing_vias.rpt
+check_pg_connectivity -check_std_cell_pins none > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/check_pg_connectivity.rpt
+check_pg_drc -ignore_std_cells                  > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/check_pg_drc.rpt
+check_pg_missing_vias                           > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/check_pg_missing_vias.rpt
 
 # Final QoR Report
-report_qor -significant_digits 3 -scenarios [get_scenarios] > ${RPT_DIR}/${DESIGN_STAGE}/report_qor.rpt
+report_qor -significant_digits 3 -scenarios [get_scenarios] > ${RPT_DIR}/FUSION/${DESIGN_STAGE}/report_qor.rpt
 
 ###############################################################################
 # Export Deliverables (Abstract, DEF, Floorplan File)
@@ -189,21 +157,15 @@ report_qor -significant_digits 3 -scenarios [get_scenarios] > ${RPT_DIR}/${DESIG
 #create_abstract -read_only
 #create_frame
 
-write_floorplan -force -output ${OUT_DIR}/${DESIGN}.fp
-write_floorplan -force -output ${OUT_DIR}/${DESIGN}.fp.dc -net_types {power ground} -include_physical_status {fixed locked}
+write_floorplan -force -output ${OUT_DIR}/FUSION/${DESIGN_STAGE}/${DESIGN}.fp
+write_floorplan -force -output ${OUT_DIR}/FUSION/${DESIGN_STAGE}/${DESIGN}.fp.dc -net_types {power ground} -include_physical_status {fixed locked}
 
 write_def -include_tech_via_definitions \
           -include {rows_tracks vias blockages specialnets} \
-          "${OUT_DIR}/floorplan.def"
+          "${OUT_DIR}/FUSION/${DESIGN_STAGE}/floorplan.def"
 
 ###############################################################################
 # Save Block & Close Stage
 ###############################################################################
 save_lib
 save_block -as ${DESIGN}/${DESIGN_STAGE} -compress
-
-echo "*****************************************************************************************"
-puts "INFO: The ${DESIGN_STAGE} stage for ${DESIGN} completed successfully."
-echo "*****************************************************************************************"
-date
-return
