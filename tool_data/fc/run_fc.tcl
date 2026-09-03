@@ -16,5 +16,5 @@ puts "\[INFO\] Running script: 4_route.tcl"
 after 2000
 source -echo -verbose ../4_route.tcl
 
-#puts "\[INFO\] Running script: 5_pos_route.tcl"
+#puts "\[INFO\] Running script: 5_signoff.tcl"
 #after 2000

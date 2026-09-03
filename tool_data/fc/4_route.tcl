@@ -58,9 +58,8 @@ check_routes
 
 # Running route_detail phase
 set_app_options -name route.detail.timing_driven -value true
-set_app_options -name route.detail.incremental_detail_route_special_design_rule_fixing_stage -value early_routing
-
-route_detail -initial_drc_from_input true
+#set_app_options -name route.detail.incremental_detail_route_special_design_rule_fixing_stage -value early_routing
+#route_detail -initial_drc_from_input true
 route_detail -incremental true
 
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeDetail -compress
@@ -68,19 +67,10 @@ save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeDetail -compress
 # Running route_opt phase 1
 set_app_options -name route_opt.flow.enable_ccd -value true
 set_app_options -name route_opt.flow.enable_clock_power_recovery -value auto
-set_app_options -name route_opt.flow.enable_ccd_clock_drc_fixing -value always_on
-set_app_options -name ccd.post_route_buffer_removal -value true
+#set_app_options -name ccd.post_route_buffer_removal -value true
 
 route_opt
 save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeOpt_1 -compress
-
-# Running route_opt phase 2
-set_app_options -name time.pba_optimization_mode -value path
-
-route_opt
-report_qor -summary -pba_mode path
-save_block -as ${DESIGN}/${DESIGN_STAGE}_after_routeOpt_2 -compress
-
 
 ###############################################################################
 # Post-Route Verification & Quality Diagnostics

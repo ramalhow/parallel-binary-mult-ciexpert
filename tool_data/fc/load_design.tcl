@@ -18,7 +18,9 @@ set_app_var search_path ". ${DB_DIR} ${DLIB_DIR} ${NDM_DIR} ${RTL_DIR} ${TECH_DI
 set DESIGN_STAGE "load_design"
 
 open_lib ${DLIB_DIR}/${DLIB_FUSION}.dlib
-open_block ${DLIB_FUSION}/final_opto
+
+# this will be changed constantly
+#open_block ${DLIB_FUSION}/final_opto
 
 file mkdir ${RPT_DIR}/FUSION/${DESIGN_STAGE}
 
