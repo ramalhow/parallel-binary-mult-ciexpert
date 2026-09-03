@@ -24,6 +24,9 @@ open_block ${DLIB_FUSION}/${LAST_STAGE}
 # Setup the fusion compiler specific settings
 source ../setup/setup_fc.tcl
 
+# Setup SVF for Formality equivalence checking
+set_svf -append ${OUT_DIR}/${DESIGN}.svf
+
 ###############################################################################
 # 1° stage = initial_map
 ###############################################################################

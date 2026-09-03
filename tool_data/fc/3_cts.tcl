@@ -27,6 +27,9 @@ current_block ${DLIB_FUSION}/${DESIGN_STAGE}
 # Setup the fusion compiler specific settings
 source ../setup/setup_fc.tcl
 
+# Setup SVF for Formality equivalence checking
+set_svf -append ${OUT_DIR}/${DESIGN}.svf
+
 # Outputs 
 derive_clock_cell_references -output ${RPT_DIR}/FUSION/${DESIGN_STAGE}/cts_leq_set.tcl
 
@@ -168,4 +171,4 @@ report_constraints -all_violators \
 # Save Block & Finish Session
 ###############################################################################
 save_lib
-save_block -as ${DESIGN}/${DESIGN_STAGE} -compress
+save_block -as ${DLIB_FUSION}/${DESIGN_STAGE} -compress
