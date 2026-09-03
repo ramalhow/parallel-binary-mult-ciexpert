@@ -23,6 +23,13 @@ set RPT_DIR     "${PRJT_BASE}/rpt"
 set RTL_DIR     "${PRJT_BASE}/rtl"
 set TECH_DIR    "${PRJT_BASE}/tech"
 
+# Diferenciando o nome das dlibs pra evitar corrompimento das dlibs já existentes
+set DLIB_FUSION ${DESIGN}_fusion
+
+set MAX_SIGNAL_ROUTING_LAYER M7
+set CTS_MIN_ROUTING_LAYER    M4
+set CTS_MAX_ROUTING_LAYER    M5
+
 echo "*****************************************************************************************"
 puts "\[INFO\] SETUP: All the user variables and paths haven been defined successfully."
 echo "*****************************************************************************************"

@@ -11,22 +11,14 @@
 ###############################################################################
 
 # Project definitions and variables
-source ../../../scripts/setup_vars.tcl
-
-# 
+source ../../../scripts/setup_vars.tcl 
 set_app_var search_path ". ${DB_DIR} ${DLIB_DIR} ${NDM_DIR} ${RTL_DIR} ${TECH_DIR}"
-
-# Tech setup
-source ../../../scripts/tech_setup.tcl
-
-# Setup the fusion compiler specific settings
-source ../setup/setup_fc.tcl
 
 # Current Stage
 set DESIGN_STAGE "load_design"
 
 open_lib ${DLIB_DIR}/${DLIB_FUSION}.dlib
-open_block ${DLIB_FUSION}/init_design
+open_block ${DLIB_FUSION}/final_opto
 
 file mkdir ${RPT_DIR}/FUSION/${DESIGN_STAGE}
 

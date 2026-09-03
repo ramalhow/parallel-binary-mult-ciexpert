@@ -16,12 +16,13 @@ set_app_var search_path ". ${DB_DIR} ${DLIB_DIR} ${NDM_DIR} ${RTL_DIR} ${TECH_DI
 # Tech setup
 source ../../../scripts/tech_setup.tcl
 
-# Setup the fusion compiler specific settings
-source ../setup/setup_fc.tcl
-
 # Reading the design data
 open_lib ${DLIB_DIR}/${DLIB_FUSION}.dlib
 set LAST_STAGE "init_design"
+open_block ${DLIB_FUSION}/${LAST_STAGE}
+
+# Setup the fusion compiler specific settings
+source ../setup/setup_fc.tcl
 
 ###############################################################################
 # 1° stage = initial_map

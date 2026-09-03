@@ -16,9 +16,6 @@ set_app_var search_path ". ${DB_DIR} ${DLIB_DIR} ${NDM_DIR} ${RTL_DIR} ${TECH_DI
 # Tech setup
 source ../../../scripts/tech_setup.tcl
 
-# Setup the fusion compiler specific settings
-source ../setup/setup_fc.tcl
-
 # Reading the design data
 open_lib ${DLIB_DIR}/${DLIB_FUSION}.dlib
 set LAST_STAGE "final_opto"
@@ -27,29 +24,22 @@ set DESIGN_STAGE "floorplan"
 copy_block -from ${DLIB_FUSION}/${LAST_STAGE} -to ${DLIB_FUSION}/${DESIGN_STAGE}
 current_block ${DLIB_FUSION}/${DESIGN_STAGE}
 
-###############################################################################
-# floorplan initialization
-###############################################################################
-
-# initialize_floorplan -shape R \
-#                      -orientation N \
-#                      -side_ratio {1 1 1 1} \
-#                      -core_offset {10} \
-#                      -core_utilization 0.55
-
-# shape_blocks
-
-# create_placement -floorplan
-
-# set_block_pin_constraints -self \
-#                           -pin_spacing_distance 8 \
-#                           -sides {1 2 3 4} \
-#                           -allowed_layers {M4 M5 M6 M7} \
-#                           -hard_constraints {location spacing layer}
-
-# place_pins -self
+# Setup the fusion compiler specific settings
+source ../setup/setup_fc.tcl
 
 ###############################################################################
+# floorplan refinement
+###############################################################################
+set_app_options -name plan.place.congestion_driven_mode -value both
+set_app_options -name place.coarse.cong_restruct -value on
+set_app_options -name place.coarse.cong_restruct_effort -value ultra
+
+create_placement -use_seed_locs -floorplan -congestion -congestion_effort high
+create_placement -use_seed_locs -congestion -congestion_effort high -effort high
+
+legalize_placement
+
+#############################################shape_blocks##################################
 # Logical Power & Ground Connections (Prevents floating PG pin errors)
 ###############################################################################
 create_net -power VDD
@@ -127,6 +117,8 @@ compile_pg -strategies pg_strategy9
 ###############################################################################
 remove_placement_blockages -all -verbose
 remove_routing_blockages   -all -verbose
+
+legalize_placement -incremental
 
 route_global -floorplan true -congestion_map_only true
 

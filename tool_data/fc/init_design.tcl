@@ -19,9 +19,6 @@ set_app_var search_path ". ${DB_DIR} ${DLIB_DIR} ${NDM_DIR} ${RTL_DIR} ${TECH_DI
 # Tech setup
 source ../../../scripts/tech_setup.tcl
 
-# Setup the fusion compiler specific settings
-source ../setup/setup_fc.tcl
-
 ###############################################################################
 # Initialize the design
 ###############################################################################
@@ -55,18 +52,41 @@ suppress_message ATTR-12
 set_attribute [get_layers {M1 M3 M5 M7 M9}] routing_direction horizontal
 set_attribute [get_layers {M2 M4 M6 M8 MRDL}] routing_direction vertical
 
-#set_ignored_layers -max_routing_layer $MAX_ROUTING_LAYER
+report_ignored_layers
+set_ignored_layers -max_routing_layer $MAX_SIGNAL_ROUTING_LAYER
+report_ignored_layers
 
 ###############################################################################
-# Scenarios and Constraints
+# Scenarios 
 ###############################################################################
-
-# loading and applying the constraints
-source ../../../scripts/constraints.tcl
-
-# loading the scenarios
 set CURRENT_DLIB ${DLIB_FUSION}
 source ../../../scripts/scenarios.tcl
+
+###############################################################################
+# Timing Constraints
+###############################################################################
+set MAIN_CLK 3.333333
+
+# Define the clock var name used in our design
+set DESIGN_CLK_NAME i_clk
+
+set CLOCK_SKEW_SETUP [expr $MAIN_CLK*0.02]
+#set CLOCK_SKEW_HOLD  [expr $MAIN_CLK*0.02]
+
+set INPUT_PORT_DELAY_MIN [expr $MAIN_CLK*0.01]
+set INPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
+
+set OUTPUT_PORT_DELAY_MAX [expr $MAIN_CLK*0.15]
+
+create_clock -period $MAIN_CLK [get_ports $DESIGN_CLK_NAME]
+
+set_clock_uncertainty -setup $CLOCK_SKEW_SETUP [get_clocks $DESIGN_CLK_NAME]
+#set_clock_uncertainty -hold $CLOCK_SKEW_HOLD [get_clocks $DESIGN_CLK_NAME]
+
+set_input_delay -min $INPUT_PORT_DELAY_MIN -clock $DESIGN_CLK_NAME [all_inputs -exclude_clock_ports]
+set_input_delay -max $INPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [all_inputs -exclude_clock_ports]
+
+set_output_delay -max $OUTPUT_PORT_DELAY_MAX -clock $DESIGN_CLK_NAME [get_ports [all_outputs]]
 
 ###############################################################################
 # Tie Cells
@@ -75,63 +95,8 @@ set_dont_touch [get_lib_cells */TIE*] false
 set_lib_cell_purpose -include optimization [get_lib_cells */TIE*]
 
 ###############################################################################
-# Auto Floorplan
-###############################################################################
-set_auto_floorplan_constraints -shape R \
-                     -orientation N \
-                     -side_ratio {1 1 1 1} \
-                     -core_offset {10} \
-                     -core_utilization 0.55
-
-set_block_pin_constraints -self \
-                          -pin_spacing_distance 8 \
-                          -sides {1 2 3 4} \
-                          -allowed_layers {M4 M5 M6 M7} \
-                          -hard_constraints {location spacing layer}
-
-###############################################################################
-# CTS Setup
-###############################################################################
-
-set CLOCK_BUFFERS           "NBUFFX32_LVT NBUFFX16_LVT NBUFFX8_LVT NBUFFX4_LVT NBUFFX2_LVT \
-							IBUFFX32_LVT IBUFFX16_LVT IBUFFX8_LVT IBUFFX4_LVT IBUFFX2_LVT"
-
-set CLOCK_BUFFERS_INV       "INVX32_LVT INVX16_LVT INVX8_LVT INVX4_LVT INVX2_LVT INVX1_LVT INVX0_LVT"
-
-set_lib_cell_purpose -exclude cts [get_lib_cells]
-set_dont_touch ${CLOCK_BUFFERS} false
-set_dont_touch ${CLOCK_BUFFERS_INV} false
-
-set_lib_cell_purpose -include cts  "${CLOCK_BUFFERS} ${CLOCK_BUFFERS_INV}"
-set_lib_cell_purpose -include optimization "${CLOCK_BUFFERS} ${CLOCK_BUFFERS_INV}"
-set_lib_cell_purpose -include hold "${CLOCK_BUFFERS} ${CLOCK_BUFFERS_INV}"
-
-# Enable auto-skew target adjustment for local skew tuning
-set_app_options -name cts.common.enable_auto_skew_target_for_local_skew -value true
-
-# Clock Tree Targets
-set CLK1_ROOT           i_clk
-set CTS_MAX_FANOUT      20
-set CLK1_BUFF_MAX_TRANS [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
-set CLK1_SINK_MAX_TRANS [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
-set CLK1_TARGET_SKEW    [expr $MAIN_CLK * 0.02]   ;# ~66.7 ps
-
-# Apply Target Skew
-set_clock_tree_options -clocks $CLK1_ROOT -target_skew $CLK1_TARGET_SKEW
-
-# Apply Slew / Transition limits on clock path and flip-flop CP sinks
-set_max_transition $CLK1_BUFF_MAX_TRANS [get_clocks ${CLK1_ROOT}] -clock_path
-set_max_transition $CLK1_SINK_MAX_TRANS [get_pins -hierarchical -filter "is_clock_pin == true"]
-
-###############################################################################
 # End off init_design
 ###############################################################################
-<<<<<<< Updated upstream:tool_data/fc/0_init_design.tcl
-save_lib
-save_block -compress -as ${DLIB_FUSION}/${DESIGN_STAGE}
-=======
->>>>>>> Stashed changes:tool_data/fc/init_design.tcl
-
 file mkdir ${RPT_DIR}/FUSION/${DESIGN_STAGE}
 report_lib \
         -timing_arcs \
